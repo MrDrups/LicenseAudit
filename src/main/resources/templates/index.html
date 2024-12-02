@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ru">
 <th:block th:replace="fragments/header :: commonHead"></th:block>
 
 <body>
-<div class="navigation-bar">
-    <nav>
-        <ul class="nav nav-tabs" id="Tabs" role="tablist">
-            <li class="nav-item"><a th:href="@{/}" class="nav-link active" role="tab">Главная страница</a></li>
-            <li class="nav-item"><a th:href="@{/companies}" class="nav-link " aria-selected="true" role="tab">Компании</a></li>
-            <li class="nav-item"><a th:href="@{/license_plans}" class="nav-link" aria-selected="false" role="tab">Лицензионные планы</a></li>
-            <li sec:authorize="hasRole('ADMIN')" class="nav-item"><a th:href="@{/admin}" class="nav-link" aria-selected="false" role="tab">Админ Панель</a></li>
-            <li class="nav-item"><a th:href="@{/login}" class="nav-link" aria-selected="false" role="tab">Выйти</a></li>
-        </ul>
-    </nav>
-</div>
+<nav>
+    <ul class="nav nav-tabs" id="Tabs" role="tablist">
+        <li class="nav-item"><a th:href="@{/}" class="nav-link active" role="tab">Главная страница</a></li>
+        <li class="nav-item"><a th:href="@{/companies}" class="nav-link " aria-selected="true"
+                                role="tab">Компании</a></li>
+        <li class="nav-item"><a th:href="@{/license_plans}" class="nav-link" aria-selected="false" role="tab">Лицензионные
+            планы</a></li>
+        <li sec:authorize="hasRole('ADMIN')" class="nav-item"><a th:href="@{/admin}" class="nav-link"
+                                                                 aria-selected="false" role="tab">Админ Панель</a>
+        </li>
+        <li class="nav-item"><a th:href="@{/login}" class="nav-link" aria-selected="false" role="tab">Выйти</a></li>
+    </ul>
+</nav>
 <h1>Список лицензий</h1>
 
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="search-bar">
             <form th:action="@{/search}" class="form-inline" style="display: flex; justify-content: center;">
-                <input type="text" class="search-bar input" name="keyword" id="keyword" size="50" th:value="${keyword}" placeholder="Поиск..." required>
+                <input type="text" class="search-bar input" name="keyword" id="keyword" size="50" th:value="${keyword}"
+                       placeholder="Поиск..." required>
                 <button type="submit" class="search-bar button">Поиск</button>
                 <button type="button" class="search-bar button" onclick="clearSearch()">Очистить</button>
             </form>
@@ -152,8 +155,8 @@
 
 <script>
     let editButtons = document.querySelectorAll('button[data-bs-toggle="modal"][data-bs-target="#LicenseModal"]');
-    editButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
+    editButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
             let id = button.getAttribute('data-id');
             let key = button.getAttribute('data-key');
             let companyId = button.getAttribute('data-company-id');
@@ -230,6 +233,7 @@
         createPaginationButtons();
         displayPage(1); // Показать первую страницу
     });
+
     function clearSearch() {
         window.location = "/";
     }

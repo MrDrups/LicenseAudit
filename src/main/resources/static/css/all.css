@@ -302,23 +302,37 @@ table tbody tr:hover {
     justify-content: center; /* Центрирование кнопок */
     margin: 0;
     padding: 0;
+    gap: 20px; /* Расстояние между кнопками */
+}
+
+.nav-tabs {
+    border-bottom: none; /* Убираем нижнюю границу у вкладок */
+    margin: 0; /* Убираем лишние отступы */
+    padding: 0; /* Убираем внутренние отступы */
 }
 
 .nav-link {
     text-decoration: none;
     color: #007AFF; /* Синий цвет текста */
-    margin: 0 15px;
     font-size: 16px;
-    font-weight: 500;
-    padding: 5px 10px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: bold;
+    padding: 10px 15px; /* Увеличение зоны клика */
+    border: 2px solid transparent; /* Прозрачная граница изначально */
+    border-radius: 8px; /* Более мягкие округлые углы */
+    transition: all 0.3s ease; /* Плавный переход для всех эффектов */
+    background: linear-gradient(to right, #e3f2fd, #ffffff); /* Лёгкий градиент фона */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Лёгкая тень для объёма */
 }
 
 .nav-link:hover {
-    background-color: #007AFF; /* Синий фон при наведении */
-    color: white; /* Белый текст при наведении */
-    border-radius: 5px; /* Округлые углы */
+    background: linear-gradient(to right, #007AFF, #005BBB); /* Градиент с более насыщенным цветом */
+    color: #ffffff; /* Белый текст при наведении */
+    border-color: #005BBB; /* Меняем только цвет границы */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Более выраженная тень */
+    transform: scale(1.01); /* Лёгкое увеличение */
 }
+
+
 .stat-value {
     font-size: 1em;  /* Увеличиваем размер числа */
     font-weight: bold; /* Делаем число жирным */
