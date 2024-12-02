@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<th:block th:replace="fragments/header :: commonHead"></th:block>
+
+<body>
+<div class="navigation-bar">
+    <nav>
+        <ul class="nav nav-tabs" id="Tabs" role="tablist">
+            <li class="nav-item"><a th:href="@{/}" class="nav-link active" role="tab">Главная страница</a></li>
+            <li class="nav-item"><a th:href="@{/companies}" class="nav-link " aria-selected="true" role="tab">Компании</a></li>
+            <li class="nav-item"><a th:href="@{/license_plans}" class="nav-link" aria-selected="false" role="tab">Лицензионные планы</a></li>
+            <li sec:authorize="hasRole('ADMIN')" class="nav-item"><a th:href="@{/admin}" class="nav-link" aria-selected="false" role="tab">Админ Панель</a></li>
+            <li class="nav-item"><a th:href="@{/login}" class="nav-link" aria-selected="false" role="tab">Выйти</a></li>
+        </ul>
+    </nav>
+</div>
+<h1>Список лицензий</h1>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="search-bar">
+            <form th:action="@{/search}" class="form-inline" style="display: flex; justify-content: center;">
+                <input type="text" class="search-bar input" name="keyword" id="keyword" size="50" th:value="${keyword}" placeholder="Поиск..." required>
+                <button type="submit" class="search-bar button">Поиск</button>
+                <button type="button" class="search-bar button" onclick="clearSearch()">Очистить</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="table-container">
+    <div class="table-wrapper">
+        <table id="LicenseTable" class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Лицензионный ключ</th>
+                <th>
+                    <a th:href="@{/companies}" style="text-decoration: none; color: #007AFF;">Компания</a>
+                </th>
+                <th>
+                    <a th:href="@{/license_plans}" style="text-decoration: none; color: #007AFF;">План</a>
+                </th>
+                <th>Дата начала</th>
+                <th>Дата окончания</th>
+                <th>Дней до окончания</th>
+                <th>Отозвана</th>
+                <th>Продлена</th>
+                <th sec:authorize="hasRole('ADMIN')" style="text-align: center;">Действия</th>
+            </tr>
+            </thead>
+            <tbody id="LicenseTableBody">
+            <tr th:each="license : ${licenses}">
+                <td th:text="${license.l01_ID}"></td>
+                <td th:text="${license.l01_KEY}"></td>
+                <td th:text="${license.company.c01_NAME}"></td>
+                <td th:text="${license.licensePlan.LP01_NAME}"></td>
+                <td th:text="${license.l01_START_DATE}"></td>
+                <td th:text="${license.l01_END_DATE}"></td>
+                <td class="days-remaining"></td>
+                <td th:text="${license.l01_REVOKED ? 'Да' : 'Нет'}"></td>
+                <td th:text="${license.l01_EXTENDED ? 'Да' : 'Нет'}"></td>
+                <td sec:authorize="hasRole('ADMIN')" style="text-align: center;">
+                    <button
+                            type="button"
+                            class="btn action-btn edit-btn"
+                            data-bs-toggle="modal" data-bs-target="#LicenseModal"
+                            th:data-id="${license.l01_ID}"
+                            th:data-key="${license.l01_KEY}"
+                            th:data-company-id="${license.company.c01_ID}"
+                            th:data-plan-id="${license.licensePlan.LP01_ID}"
+                            th:data-start-date="${license.l01_START_DATE}"
+                            th:data-end-date="${license.l01_END_DATE}"
+                            th:data-revoked="${license.l01_REVOKED}"
+                            th:data-extended="${license.l01_EXTENDED}">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                    <a class="btn action-btn delete-btn"
+                       th:href="@{/delete/{id}(id=${license.l01_ID})}">
+                        <i class="fas fa-trash-alt"></i>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="counter-container">
+            <p id="rowCounter" style="font-size: 14px; color: #333333;"></p>
+        </div>
+        <div sec:authorize="hasRole('ADMIN')" class="pagination-add-container">
+            <div id="pagination" class="pagination-container"></div>
+            <button class="add-button" data-bs-toggle="modal" data-bs-target="#LicenseModal">Добавить</button>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="LicenseModal" tabindex="-1" aria-labelledby="LicenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/save}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="LicenseModalLabel">Добавить/Редактировать лицензию</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="licenseKey" class="form-label">Лицензионный ключ</label>
+                        <input type="text" class="form-control" id="licenseKey" name="L01_KEY" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="companyId" class="form-label">Компания</label>
+                        <select class="form-select" id="companyId" name="companyId" required>
+                            <option value="" disabled selected>Выберите компанию</option>
+                            <option th:each="company : ${companies}" th:value="${company.c01_ID}"
+                                    th:text="${company.c01_NAME}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="licensePlanId" class="form-label">Лицензионный план</label>
+                        <select class="form-select" id="licensePlanId" name="licensePlanId" required>
+                            <option value="" disabled selected>Выберите план</option>
+                            <option th:each="plan : ${licensePlans}" th:value="${plan.LP01_ID}"
+                                    th:text="${plan.LP01_NAME}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label">Дата начала</label>
+                        <input type="date" class="form-control" id="startDate" name="L01_START_DATE" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="endDate" class="form-label">Дата окончания</label>
+                        <input type="date" class="form-control" id="endDate" name="L01_END_DATE" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="revoked" name="L01_REVOKED">
+                        <label for="revoked" class="form-check-label">Отозвана</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="extended" name="L01_EXTENDED">
+                        <label for="extended" class="form-check-label">Продлена</label>
+                    </div>
+                    <input type="hidden" name="L01_ID" id="licenseId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let editButtons = document.querySelectorAll('button[data-bs-toggle="modal"][data-bs-target="#LicenseModal"]');
+    editButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            let id = button.getAttribute('data-id');
+            let key = button.getAttribute('data-key');
+            let companyId = button.getAttribute('data-company-id');
+            let planId = button.getAttribute('data-plan-id');
+            let startDate = button.getAttribute('data-start-date');
+            let endDate = button.getAttribute('data-end-date');
+            let revoked = button.getAttribute('data-revoked') === 'true';
+            let extended = button.getAttribute('data-extended') === 'true';
+
+            document.getElementById('licenseId').value = id;
+            document.getElementById('licenseKey').value = key;
+            document.getElementById('companyId').value = companyId;
+            document.getElementById('licensePlanId').value = planId;
+            document.getElementById('startDate').value = startDate;
+            document.getElementById('endDate').value = endDate;
+            document.getElementById('revoked').checked = revoked;
+            document.getElementById('extended').checked = extended;
+        });
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const rows = document.querySelectorAll('#LicenseTable tbody tr');
+
+        rows.forEach(row => {
+            const endDateText = row.querySelector('td:nth-child(6)').textContent.trim();   // 6-й столбец: дата окончания
+            const daysRemainingCell = row.querySelector('.days-remaining');
+
+            if (endDateText) {
+                const endDate = new Date(endDateText);
+                const currentDate = new Date();
+                const diffTime = endDate - currentDate; // Сравниваем с текущей датой
+
+                if (diffTime > 0) {
+                    daysRemainingCell.textContent = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                } else {
+                    daysRemainingCell.textContent = 'Истекла';
+                }
+            } else {
+                daysRemainingCell.textContent = 'Не указано';
+            }
+        });
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+        const rowsPerPage = 5; // Количество строк на страницу
+        const tableBody = document.getElementById("LicenseTableBody");
+        const pagination = document.getElementById("pagination");
+        const rows = Array.from(tableBody.querySelectorAll("tr"));
+        const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+        function displayPage(page) {
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            rows.forEach((row, index) => {
+                row.style.display = index >= start && index < end ? "" : "none";
+            });
+
+            // Обновление активной кнопки
+            Array.from(pagination.children).forEach((button, index) => {
+                button.classList.toggle("active", index === page - 1);
+            });
+        }
+
+        function createPaginationButtons() {
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement("button");
+                button.textContent = i;
+                button.addEventListener("click", () => displayPage(i));
+                pagination.appendChild(button);
+            }
+        }
+
+        createPaginationButtons();
+        displayPage(1); // Показать первую страницу
+    });
+    function clearSearch() {
+        window.location = "/";
+    }
+
+</script>
+
+</body>
+</html>
+
+

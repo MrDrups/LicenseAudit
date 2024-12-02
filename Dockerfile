@@ -1,4 +1,14 @@
-FROM ubuntu:latest
-LABEL authors="andre"
+# Используем базовый образ с Java 17
+FROM eclipse-temurin:21-jdk-alpine
 
-ENTRYPOINT ["top", "-b"]
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Копируем JAR-файл приложения в контейнер
+COPY build/libs/LicenseAudit-0.0.1-SNAPSHOT.jar app.jar
+
+# Открываем порт 8080
+EXPOSE 8081
+
+# Запускаем приложение
+ENTRYPOINT ["java", "-jar", "app.jar"]
