@@ -296,41 +296,41 @@ table tbody tr:hover {
     font-size: 16px;
 }
 
-.nav-list {
-    list-style: none;
-    display: flex;
-    justify-content: center; /* Центрирование кнопок */
-    margin: 0;
-    padding: 0;
-    gap: 20px; /* Расстояние между кнопками */
-}
+/*.nav-list {*/
+/*    list-style: none;*/
+/*    display: flex;*/
+/*    justify-content: center; !* Центрирование кнопок *!*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    gap: 20px; !* Расстояние между кнопками *!*/
+/*}*/
 
-.nav-tabs {
-    border-bottom: none; /* Убираем нижнюю границу у вкладок */
-    margin: 0; /* Убираем лишние отступы */
-    padding: 0; /* Убираем внутренние отступы */
-}
+/*.nav-tabs {*/
+/*    border-bottom: none; !* Убираем нижнюю границу у вкладок *!*/
+/*    margin: 0; !* Убираем лишние отступы *!*/
+/*    padding: 0; !* Убираем внутренние отступы *!*/
+/*}*/
 
-.nav-link {
-    text-decoration: none;
-    color: #007AFF; /* Синий цвет текста */
-    font-size: 16px;
-    font-weight: bold;
-    padding: 10px 15px; /* Увеличение зоны клика */
-    border: 2px solid transparent; /* Прозрачная граница изначально */
-    border-radius: 8px; /* Более мягкие округлые углы */
-    transition: all 0.3s ease; /* Плавный переход для всех эффектов */
-    background: linear-gradient(to right, #e3f2fd, #ffffff); /* Лёгкий градиент фона */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Лёгкая тень для объёма */
-}
+/*.nav-link {*/
+/*    text-decoration: none;*/
+/*    color: #007AFF; !* Синий цвет текста *!*/
+/*    font-size: 16px;*/
+/*    font-weight: bold;*/
+/*    padding: 10px 15px; !* Увеличение зоны клика *!*/
+/*    border: 2px solid transparent; !* Прозрачная граница изначально *!*/
+/*    border-radius: 8px; !* Более мягкие округлые углы *!*/
+/*    transition: all 0.3s ease; !* Плавный переход для всех эффектов *!*/
+/*    background: linear-gradient(to right, #e3f2fd, #ffffff); !* Лёгкий градиент фона *!*/
+/*    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); !* Лёгкая тень для объёма *!*/
+/*}*/
 
-.nav-link:hover {
-    background: linear-gradient(to right, #007AFF, #005BBB); /* Градиент с более насыщенным цветом */
-    color: #ffffff; /* Белый текст при наведении */
-    border-color: #005BBB; /* Меняем только цвет границы */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Более выраженная тень */
-    transform: scale(1.01); /* Лёгкое увеличение */
-}
+/*.nav-link:hover {*/
+/*    background: linear-gradient(to right, #007AFF, #005BBB); !* Градиент с более насыщенным цветом *!*/
+/*    color: #ffffff; !* Белый текст при наведении *!*/
+/*    border-color: #005BBB; !* Меняем только цвет границы *!*/
+/*    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); !* Более выраженная тень *!*/
+/*    transform: scale(1.01); !* Лёгкое увеличение *!*/
+/*}*/
 
 
 .stat-value {

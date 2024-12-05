@@ -26,6 +26,7 @@ public class LicenseLog {
     private String LL01_NEW_VALUE;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "U01_ID", referencedColumnName = "U01_ID")
     private User user;
 

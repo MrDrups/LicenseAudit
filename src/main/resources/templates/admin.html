@@ -2,102 +2,190 @@
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <th:block th:replace="fragments/header :: commonHead"></th:block>
-
-<body>
-<div class="navigation-bar">
-    <nav>
-        <ul class="nav nav-tabs" id="Tabs" role="tablist">
-            <li class="nav-item"><a th:href="@{/}" class="nav-link" role="tab">Главная страница</a></li>
-            <li class="nav-item"><a th:href="@{/companies}" class="nav-link " aria-selected="true"
-                                    role="tab">Компании</a></li>
-            <li class="nav-item"><a th:href="@{/license_plans}" class="nav-link" aria-selected="false" role="tab">Лицензионные
-                планы</a></li>
-            <li sec:authorize="hasRole('ADMIN')" class="nav-item"><a th:href="@{/admin}" class="nav-link active"
-                                                                     aria-selected="false" role="tab">Админ Панель</a>
-            </li>
-            <li class="nav-item"><a th:href="@{/login}" class="nav-link" aria-selected="false" role="tab">Выйти</a></li>
-        </ul>
-    </nav>
-</div>
-<h1>Админ панель</h1>
-<div class="table-container">
+<body style="background-color: #dee2e6">
+<nav class="navbar navbar-light navbar-expand-lg shadow-lg rounded-bottom" style="background-color: #f8f9fa;">
+    <div class="container-fluid">
+        <div class="navbar-nav">
+            <a th:href="@{/}" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-file-text" viewBox="0 0 16 16">
+                    <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5M5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z"/>
+                    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1"/>
+                </svg>
+                Лицензии
+            </a>
+            <a th:href="@{/companies}" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-building" viewBox="0 0 16 16">
+                    <path d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
+                    <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3z"/>
+                </svg>
+                Компании
+            </a>
+            <a th:href="@{/license_plans}" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                     class="bi bi-stickies" viewBox="0 0 16 16">
+                    <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5V13a1 1 0 0 0 1 1V1.5a.5.5 0 0 1 .5-.5H14a1 1 0 0 0-1-1z"/>
+                    <path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v11A1.5 1.5 0 0 0 3.5 16h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 16 9.586V3.5A1.5 1.5 0 0 0 14.5 2zM3 3.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 .5.5V9h-4.5A1.5 1.5 0 0 0 9 10.5V15H3.5a.5.5 0 0 1-.5-.5zm7 11.293V10.5a.5.5 0 0 1 .5-.5h4.293z"/>
+                </svg>
+                Лицензионные планы
+            </a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link active" aria-current="page">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear"
+                     viewBox="0 0 16 16">
+                    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+                    <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+                </svg>
+                Администрирование
+            </a>
+        </div>
+        <form class="d-flex">
+            <button class="btn btn-outline-danger" type="submit">
+                <a th:href="@{/login}" style="text-decoration: none; color: red">Выйти</a>
+            </button>
+        </form>
+    </div>
+</nav>
+<div class="mt-5 shadow-lg p-3 rounded-3" style="background-color: #f8f9fa">
+    <div class="row mb-3">
+        <div class="col-12">
+            <h3 class="mt-3" style="color: black">Администрирование</h3>
+        </div>
+    </div>
     <!-- Навигация вкладок -->
     <ul class="nav nav-tabs" id="adminTabs" role="tablist">
         <li class="nav-item">
-            <button class="nav-link active" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" role="tab"
-                    aria-controls="logs" aria-selected="true">Логи
+            <button class="nav-link active" style="color: #333333" id="logs-tab" data-bs-toggle="tab"
+                    data-bs-target="#logs" role="tab"
+                    aria-controls="logs" aria-selected="true">
+                <i class="bi bi-braces-asterisk"></i>
+                Логи
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" role="tab"
-                    aria-controls="users" aria-selected="false">Пользователи
+            <button class="nav-link" style="color: #333333" id="users-tab" data-bs-toggle="tab" data-bs-target="#users"
+                    role="tab"
+                    aria-controls="users" aria-selected="false">
+                <i class="bi bi-people"></i>
+                Пользователи
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" id="statistics-tab" data-bs-toggle="tab" data-bs-target="#statistics" role="tab"
-                    aria-controls="statistics" aria-selected="false">Статистика
+            <button class="nav-link" style="color: #333333" id="statistics-tab" data-bs-toggle="tab"
+                    data-bs-target="#statistics" role="tab"
+                    aria-controls="statistics" aria-selected="false">
+                <i class="bi bi-bar-chart-line"></i>
+                Статистика
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" id="export-tab" data-bs-toggle="tab" data-bs-target="#export" role="tab"
-                    aria-controls="export" aria-selected="false">Выгрузка данных
+            <button class="nav-link" style="color: #333333" id="export-tab" data-bs-toggle="tab"
+                    data-bs-target="#export" role="tab"
+                    aria-controls="export" aria-selected="false">
+                <i class="bi bi-database-down"></i>
+                Выгрузка данных
             </button>
         </li>
     </ul>
-
     <!-- Содержимое вкладок -->
     <div class="tab-content mt-3">
-        <!-- Логи -->
         <div class="tab-pane fade show active" id="logs" role="tabpanel" aria-labelledby="logs-tab">
-            <table id="LicenseTable" class="table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Тип изменения</th>
-                    <th>Дата изменения</th>
-                    <th>Старое значение</th>
-                    <th>Новое значение</th>
-                    <th>Пользователь</th>
-                    <th>ID лицензии</th>
-                </tr>
-                </thead>
-                <tbody id="LogTableBody">
-                <tr th:each="log : ${licenseLogs}">
-                    <td th:text="${log.LL01_ID}"></td>
-                    <td th:text="${log.LL01_CHANGE_TYPE}"></td>
-                    <td th:text="${log.LL01_CHANGE_DATE}"></td>
-                    <td th:text="${log.LL01_OLD_VALUE}"></td>
-                    <td th:text="${log.LL01_NEW_VALUE}"></td>
-                    <td th:text="${log.user.u01_LOGIN}"></td>
-                    <td th:text="${log.license != null ? log.license.l01_ID : 'Нет данных'}"></td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="counter-container">
-                <p id="rowCounter" style="font-size: 14px; color: #333333;"></p>
-            </div>
-            <div class="pagination-add-container">
-                <div id="pagination" class="pagination-container"></div>
+
+            <div class="col-12">
+                <table id="LicenseTable" class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>
+                            <i class="bi bi-plus-slash-minus"></i>
+                            Тип изменения
+                        </th>
+                        <th>
+                            <i class="bi bi-calendar-event"></i>
+                            Дата
+                        </th>
+                        <th class="text-start">
+                            <i class="bi bi-archive"></i>
+                            Старое значение
+                        </th>
+                        <th class="text-start">
+                            <i class="bi bi-folder-plus"></i>
+                            Новое значение
+                        </th>
+                        <th>
+                            <i class="bi bi-person"></i>
+                            Пользователь
+                        </th>
+                        <th>
+                            <i class="bi bi-file-text"></i>
+                            ID лицензии
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="LogTableBody">
+                    <tr th:each="log : ${licenseLogs}">
+                        <td class="text-start">
+                            <span class="badge bg-success" th:if="${log.LL01_CHANGE_TYPE == 'CREATE'}">
+                            CREATE
+                            </span>
+                            <span class="badge bg-secondary" th:if="${log.LL01_CHANGE_TYPE == 'UPDATE'}">
+                            UPDATE
+                            </span>
+                            <span class="badge bg-danger" th:if="${log.LL01_CHANGE_TYPE == 'DELETE'}">
+                            DELETE
+                            </span>
+                        </td>
+                        <td>
+                            <samp class="text-secondary"
+                                  th:text="${#dates.format(log.LL01_CHANGE_DATE, 'yyyy-MM-dd HH:mm:ss')}"></samp>
+                        </td>
+
+                        <td>
+                            <i th:if="${log.LL01_OLD_VALUE == '-----'}" class="bi bi-dash"></i>
+                            <span th:unless="${log.LL01_OLD_VALUE == '-----'}" th:text="${log.LL01_OLD_VALUE}"></span>
+                        </td>
+                        <td>
+                            <i th:if="${log.LL01_NEW_VALUE == '-----'}" class="bi bi-dash"></i>
+                            <span th:unless="${log.LL01_NEW_VALUE == '-----'}" th:text="${log.LL01_NEW_VALUE}"></span>
+                        </td>
+
+                        <td class="text-center" th:text="${log.user.u01_LOGIN}"></td>
+                        <td class="text-center"
+                            th:text="${log.license != null ? log.license.l01_ID : 'Нет данных'}"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <!-- Пользователи -->
         <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
-            <h3>Пользователи</h3>
-            <table class="table">
+            <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Имя</th>
-                    <th>Логин</th>
-                    <th>Email</th>
-                    <th>Роль</th>
-                    <th>Действия</th>
+                    <th>
+                        <i class="bi bi-person-badge"></i>
+                        Имя
+                    </th>
+                    <th>
+                        <i class="bi bi-person"></i>
+                        Логин
+                    </th>
+                    <th>
+                        <i class="bi bi-envelope"></i>
+                        Email
+                    </th>
+                    <th>
+                        <i class="bi bi-person-gear"></i>
+                        Роль
+                    </th>
+                    <th>
+                        <i class="bi bi-code-square"></i>
+                        Действия
+                    </th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="UserTableBody">
                 <tr th:each="user : ${users}">
-                    <td th:text="${user.u01_ID}"></td>
                     <td th:text="${user.u01_NAME}"></td>
                     <td th:text="${user.u01_LOGIN}"></td>
                     <td th:text="${user.u01_EMAIL}"></td>
@@ -105,18 +193,27 @@
                     <td>
                         <button
                                 type="button"
-                                class="btn action-btn edit-btn"
+                                class="btn btn-outline-primary"
                                 data-bs-toggle="modal" data-bs-target="#UserModal"
                                 th:data-id="${user.u01_ID}"
                                 th:data-name="${user.u01_NAME}"
                                 th:data-login="${user.u01_LOGIN}"
                                 th:data-email="${user.u01_EMAIL}"
                                 th:data-role-name="${user.role.r01_NAME}">
-                            <i class="fas fa-pencil-alt"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                 class="bi bi-pencil-square text-primary" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd"
+                                      d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg>
                         </button>
-                        <a class="btn action-btn delete-btn"
+                        <a class="btn btn-outline-danger"
                            th:href="@{admin/delete/{id}(id=${user.u01_ID})}">
-                            <i class="fas fa-trash-alt"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                 class="bi bi-trash text-danger" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                            </svg>
                         </a>
                     </td>
                 </tr>
@@ -126,102 +223,135 @@
 
         <!-- Статистика -->
         <div class="tab-pane fade" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
-            <h3>Статистика</h3>
-            <p><i class="fas fa-cogs"></i> <strong>Общее количество лицензий:</strong> <span th:text="${totalLicenses}"
-                                                                                             class="stat-value"></span>
-            </p>
-            <p><i class="fas fa-building"></i> <strong>Кол-во компаний:</strong> <span th:text="${totalCompanies}"
-                                                                                       class="stat-value"></span></p>
-            <p><i class="fas fa-th-large"></i> <strong>Кол-во лиц.планов:</strong> <span th:text="${totalLicensePlans}"
-                                                                                         class="stat-value"></span></p>
+            <div class="col-12">
+                <p><i class="bi bi-file-text me-2"></i><strong>Общее количество лицензий:</strong> <span
+                        th:text="${totalLicenses}"
+                        class="stat-value"></span>
+                </p>
+                <p><i class="bi bi-building me-2"></i><strong>Кол-во компаний:</strong> <span
+                        th:text="${totalCompanies}"
+                        class="stat-value"></span>
+                </p>
+                <p><i class="bi bi-stickies me-2"></i><strong>Кол-во лиц.планов:</strong> <span
+                        th:text="${totalLicensePlans}"
+                        class="stat-value"></span></p>
 
-            <!-- Навигационная панель -->
-            <ul class="nav nav-tabs mb-3" id="statisticsTabs" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link" id="companies-tab" data-bs-toggle="tab"
-                            data-bs-target="#companies" type="button" role="tab"
-                            aria-controls="companies" aria-selected="true">Лицензии по компаниям
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" id="plans-tab" data-bs-toggle="tab"
-                            data-bs-target="#plans" type="button" role="tab"
-                            aria-controls="plans" aria-selected="false">Лицензии по планам
-                    </button>
-                </li>
-            </ul>
+                <!-- Навигационная панель -->
+                <ul class="nav nav-tabs mb-3" id="statisticsTabs" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link" style="color: #333333" id="companies-tab" data-bs-toggle="tab"
+                                data-bs-target="#companies" type="button" role="tab"
+                                aria-controls="companies" aria-selected="true">
+                            <i class="bi bi-building"></i>
+                            Лицензии по компаниям
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" style="color: #333333" id="plans-tab" data-bs-toggle="tab"
+                                data-bs-target="#plans" type="button" role="tab"
+                                aria-controls="plans" aria-selected="false">
+                            <i class="bi bi-stickies"></i>
+                            Лицензии по планам
+                        </button>
+                    </li>
+                </ul>
 
-            <!-- Содержимое вкладок -->
-            <div class="tab-content">
-                <!-- Лицензии по компаниям -->
-                <div class="tab-pane fade" id="companies" role="tabpanel" aria-labelledby="companies-tab">
-                    <div class="table-container"
-                         style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                        <div style="flex: 0.5; margin-right: 10px;">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>Компания</th>
-                                    <th>Кол-во лицензий</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="entry : ${licensesByCompanies}">
-                                    <td th:text="${entry[0]}"></td>
-                                    <td th:text="${entry[1]}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Диаграмма -->
-                        <div class="statistics-container" style="flex: 0.5; margin-right: 10px;">
-                            <canvas id="licenseChart" style="max-width: 300px; max-height: 150px"></canvas>
+                <!-- Содержимое вкладок -->
+                <div class="tab-content">
+                    <!-- Лицензии по компаниям -->
+                    <div class="tab-pane fade" id="companies" role="tabpanel" aria-labelledby="companies-tab">
+                        <div class="table-container"
+                             style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <div style="flex: 0.5; margin-right: 10px;">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <i class="bi bi-building"></i>
+                                            Компания
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-file-text"></i>
+                                            Кол-во лицензий
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="entry : ${licensesByCompanies}">
+                                        <td th:text="${entry[0]}"></td>
+                                        <td th:text="${entry[1]}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Диаграмма -->
+                            <div class="statistics-container" style="flex: 0.5; margin-right: 10px;">
+                                <canvas id="licenseChart" style="max-width: 300px; max-height: 150px"></canvas>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="tab-pane fade" id="plans" role="tabpanel" aria-labelledby="plans-tab">
-                    <div class="table-container"
-                         style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                        <div style="flex: 0.5; margin-right: 10px;">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>Лицензионный план</th>
-                                    <th>Кол-во лицензий</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:each="entry : ${licensesByPlans}">
-                                    <td th:text="${entry[0]}"></td>
-                                    <td th:text="${entry[1]}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="statistics-container" style="flex: 0.5; margin-right: 10px;">
-                            <canvas id="plansChart" style="max-width: 300px; max-height: 150px"></canvas>
+                    <div class="tab-pane fade" id="plans" role="tabpanel" aria-labelledby="plans-tab">
+                        <div class="table-container"
+                             style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <div style="flex: 0.5; margin-right: 10px;">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <i class="bi bi-stickies"></i>
+                                            План
+                                        </th>
+                                        <th>
+                                            <i class="bi bi-file-text"></i>
+                                            Кол-во лицензий
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="entry : ${licensesByPlans}">
+                                        <td th:text="${entry[0]}"></td>
+                                        <td th:text="${entry[1]}"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="statistics-container" style="flex: 0.5; margin-right: 10px;">
+                                <canvas id="plansChart" style="max-width: 300px; max-height: 150px"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
 
         <!-- Выгрузка данных -->
         <div class="tab-pane fade" id="export" role="tabpanel" aria-labelledby="export-tab">
             <h3>Выгрузка данных</h3>
-            <div class="list-group" style="width: 400px; height: 400px; margin-right: 10px; border-radius: 24px" >
-                <a th:href="@{/export/licenses}" class="list-group-item list-group-item-action">Выгрузка лицензий</a>
-                <a th:href="@{/export/companies}" class="list-group-item list-group-item-action">Выгрузка компаний</a>
-                <a th:href="@{/export/plans}" class="list-group-item list-group-item-action">Выгрузка лицензионных планов</a>
-                <a th:href="@{/export/logs}" class="list-group-item list-group-item-action">Выгрузка логов</a>
+            <div class="list-group" style="width: 400px; height: 400px; margin-right: 10px; border-radius: 24px">
+                <a th:href="@{/export/licenses}" class="list-group-item list-group-item-action"><i
+                        class="bi bi-file-text me-2"></i>Выгрузка лицензий</a>
+                <a th:href="@{/export/companies}" class="list-group-item list-group-item-action"><i
+                        class="bi bi-building me-2"></i>Выгрузка компаний</a>
+                <a th:href="@{/export/plans}" class="list-group-item list-group-item-action"><i
+                        class="bi bi-stickies me-2"></i>Выгрузка лицензионных
+                    планов</a>
+                <a th:href="@{/export/logs}" class="list-group-item list-group-item-action"><i
+                        class="bi bi-braces-asterisk me-2"></i>Выгрузка логов</a>
             </div>
         </div>
     </div>
 </div>
-
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-12">
+            <nav>
+                <ul class="pagination justify-content-center" id="pagination"></ul>
+            </nav>
+        </div>
+    </div>
+</div>
 
 <!-- Модальное окно для добавления/редактирования -->
 <div class="modal fade" id="UserModal" tabindex="-1" aria-labelledby="LicenseModalLabel" aria-hidden="true">
@@ -293,13 +423,10 @@
     });
 
     document.addEventListener("DOMContentLoaded", () => {
-        const rowsPerPage = 5; // Количество строк на страницу
-        const tableBody = document.getElementById("LogTableBody");
+        const rowsPerPage = 6; // Количество строк на страницу
         const pagination = document.getElementById("pagination");
-        const rows = Array.from(tableBody.querySelectorAll("tr"));
-        const totalPages = Math.ceil(rows.length / rowsPerPage);
 
-        function displayPage(page) {
+        function displayPage(rows, page) {
             const start = (page - 1) * rowsPerPage;
             const end = start + rowsPerPage;
 
@@ -308,23 +435,63 @@
             });
 
             // Обновление активной кнопки
-            Array.from(pagination.children).forEach((button, index) => {
-                button.classList.toggle("active", index === page - 1);
+            Array.from(pagination.querySelectorAll("li")).forEach((li, index) => {
+                li.classList.toggle("active", index === page - 1);
             });
         }
 
-        function createPaginationButtons() {
+        function createPaginationButtons(totalPages) {
+            pagination.innerHTML = ""; // Очистить предыдущие кнопки
+
             for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement("li");
+                li.classList.add("page-item");
+                if (i === 1) li.classList.add("active"); // Первая кнопка активна по умолчанию
+
                 const button = document.createElement("button");
+                button.classList.add("page-link");
                 button.textContent = i;
-                button.addEventListener("click", () => displayPage(i));
-                pagination.appendChild(button);
+                button.addEventListener("click", () => {
+                    const activeTab = document.querySelector(".tab-pane.active");
+                    const rows = Array.from(activeTab.querySelectorAll("tbody tr"));
+                    displayPage(rows, i);
+                });
+
+                li.appendChild(button);
+                pagination.appendChild(li);
             }
         }
 
-        createPaginationButtons();
-        displayPage(1); // Показать первую страницу
+        function updatePagination() {
+            const activeTab = document.querySelector(".tab-pane.active");
+            const paginationContainer = document.getElementById("pagination");
+
+            if (activeTab.id === "export") {
+                // Если активна вкладка "Выгрузка данных", скрываем пагинацию
+                paginationContainer.style.display = "none";
+                return;
+            }
+
+            const rows = Array.from(activeTab.querySelectorAll("tbody tr"));
+            const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+            paginationContainer.style.display = rows.length > 0 ? "flex" : "none"; // Показывать пагинацию только если есть строки
+            createPaginationButtons(totalPages);
+            if (rows.length > 0) {
+                displayPage(rows, 1); // Показать первую страницу
+            }
+        }
+
+        // Добавить слушатель на переключение вкладок
+        const tabButtons = document.querySelectorAll('[data-bs-toggle="tab"]');
+        tabButtons.forEach((button) =>
+            button.addEventListener("shown.bs.tab", () => updatePagination())
+        );
+
+        // Инициализировать для первой вкладки
+        updatePagination();
     });
+
 
     document.addEventListener('DOMContentLoaded', function () {
         function createDoughnutChart(canvasId, labels, data) {

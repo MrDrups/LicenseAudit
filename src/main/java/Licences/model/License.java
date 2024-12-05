@@ -29,10 +29,12 @@ public class License {
     private Set<LicenseLog> licenseLogs;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "C01_ID", referencedColumnName = "C01_ID")
     private Company company;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "LP01_ID", referencedColumnName = "LP01_ID")
     private LicensePlan licensePlan;
 

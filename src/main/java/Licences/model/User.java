@@ -2,6 +2,8 @@ package Licences.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Set;
 
@@ -27,6 +29,7 @@ public class User {
 
     @ManyToOne
     @JoinColumn(name = "R01_ID", referencedColumnName = "R01_ID")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Role role;
 
     @OneToMany(mappedBy = "user")
