@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
-<th:block th:replace="fragments/header :: commonHead"></th:block>
+<th:block th:replace="~{fragments/header :: commonHead}"></th:block>
 <body style="background-color: #dee2e6">
 <nav class="navbar navbar-light navbar-expand-lg shadow-lg rounded-bottom" style="background-color: #f8f9fa;">
     <div class="container-fluid">
@@ -364,19 +364,31 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="UserName" class="form-label">Имя</label>
+                        <label for="UserName" class="form-label">
+                            <i class="bi bi-person-badge"></i>
+                            Имя
+                        </label>
                         <input type="text" class="form-control" id="UserName" name="u01_NAME" required>
                     </div>
                     <div class="mb-3">
-                        <label for="UserLogin" class="form-label">Логин</label>
+                        <label for="UserLogin" class="form-label">
+                            <i class="bi bi-person"></i>
+                            Логин
+                        </label>
                         <input type="text" class="form-control" id="UserLogin" name="u01_LOGIN" required>
                     </div>
                     <div class="mb-3">
-                        <label for="UserEmail" class="form-label">E-Mail</label>
+                        <label for="UserEmail" class="form-label">
+                            <i class="bi bi-envelope"></i>
+                            E-Mail
+                        </label>
                         <input type="email" class="form-control" id="UserEmail" name="U01_EMAIL" required>
                     </div>
                     <div class="mb-3">
-                        <label for="UserRole" class="form-label">Роль</label>
+                        <label for="UserRole" class="form-label">
+                            <i class="bi bi-person-gear"></i>
+                            Роль
+                        </label>
                         <select class="form-select" id="UserRole" name="roleId" required>
                             <option value="" disabled selected>Выберите роль</option>
                             <option th:each=" role: ${roles}" th:value="${role.r01_ID}"
