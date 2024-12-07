@@ -126,20 +126,20 @@
                 </thead>
                 <tbody id="CompanyTableBody">
                 <tr class="text-center align-middle" th:each="company : ${companies}">
-                    <td class="name-cell text-start" th:text="${company.c01_NAME}"></td>
-                    <td class="address-cell" th:text="${company.c01_ADRESS}"></td>
-                    <td class="contact-cell" th:text="${company.c01_CONTACT}"></td>
-                    <td class="description-cell text-start" th:text="${company.c01_DESC}"></td>
+                    <td class="name-cell text-start" th:text="${company.NAME}"></td>
+                    <td class="address-cell" th:text="${company.ADDRESS}"></td>
+                    <td class="contact-cell" th:text="${company.CONTACT}"></td>
+                    <td class="description-cell text-start" th:text="${company.DESC}"></td>
                     <td sec:authorize="hasRole('ADMIN')" style="text-align: center;">
                         <button
                                 class="btn btn-outline-primary"
                                 type="button"
                                 data-bs-toggle="modal" data-bs-target="#companyModal"
-                                th:data-id="${company.c01_ID}"
-                                th:data-name="${company.c01_NAME}"
-                                th:data-address="${company.c01_ADRESS}"
-                                th:data-contact="${company.c01_CONTACT}"
-                                th:data-description="${company.c01_DESC}">
+                                th:data-id="${company.ID}"
+                                th:data-name="${company.NAME}"
+                                th:data-address="${company.ADDRESS}"
+                                th:data-contact="${company.CONTACT}"
+                                th:data-description="${company.DESC}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                  class="bi bi-pencil-square text-primary" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
@@ -148,7 +148,7 @@
                             </svg>
                         </button>
                         <a class="btn btn-outline-danger"
-                           th:href="@{companies/delete/{id}(id=${company.c01_ID})}">
+                           th:href="@{companies/delete/{id}(id=${company.ID})}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                  class="bi bi-trash text-danger" viewBox="0 0 16 16">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
@@ -187,9 +187,9 @@
                             <path d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
                             <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3z"/>
                         </svg>
-                        <label for="c01_NAME" class="form-label">Компания</label>
-                        <input type="text" class="form-control" id="c01_NAME" name="c01_NAME"
-                               th:value="${company.c01_NAME}" required>
+                        <label for="NAME" class="form-label">Компания</label>
+                        <input type="text" class="form-control" id="NAME" name="NAME"
+                               th:value="${company.NAME}" required>
                     </div>
                     <div class="mb-3">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -197,18 +197,18 @@
                             <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
                             <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
                         </svg>
-                        <label for="c01_ADRESS" class="form-label">Адрес</label>
-                        <input type="text" class="form-control" id="c01_ADRESS" name="c01_ADRESS"
-                               th:value="${company.c01_ADRESS}" required>
+                        <label for="ADDRESS" class="form-label">Адрес</label>
+                        <input type="text" class="form-control" id="ADDRESS" name="ADDRESS"
+                               th:value="${company.ADDRESS}" required>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-person-lines-fill" viewBox="0 0 16 16">
                         <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
                     </svg>
                     <div class="mb-3">
-                        <label for="c01_CONTACT" class="form-label">Контакт</label>
-                        <input type="text" class="form-control" id="c01_CONTACT" name="c01_CONTACT"
-                               th:value="${company.c01_CONTACT}" required>
+                        <label for="CONTACT" class="form-label">Контакт</label>
+                        <input type="text" class="form-control" id="CONTACT" name="CONTACT"
+                               th:value="${company.CONTACT}" required>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                          class="bi bi-card-text" viewBox="0 0 16 16">
@@ -216,12 +216,12 @@
                         <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8m0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5"/>
                     </svg>
                     <div class="mb-3">
-                        <label for="c01_DESC" class="form-label">Описание</label>
-                        <textarea class="form-control" id="c01_DESC" name="c01_DESC" rows="3" required
-                                  th:text="${company.c01_DESC}"></textarea>
+                        <label for="DESC" class="form-label">Описание</label>
+                        <textarea class="form-control" id="DESC" name="DESC" rows="3" required
+                                  th:text="${company.DESC}"></textarea>
                     </div>
                     <!-- Добавляем ID для редактирования -->
-                    <input type="hidden" name="c01_ID" th:value="${company.c01_ID}">
+                    <input type="hidden" name="ID" th:value="${company.ID}">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
@@ -243,11 +243,11 @@
             let contact = button.getAttribute('data-contact');
             let description = button.getAttribute('data-description');
 
-            document.getElementById('c01_NAME').value = name;
-            document.getElementById('c01_ADRESS').value = address;
-            document.getElementById('c01_CONTACT').value = contact;
-            document.getElementById('c01_DESC').value = description;
-            document.querySelector('input[name="c01_ID"]').value = id;
+            document.getElementById('NAME').value = name;
+            document.getElementById('ADDRESS').value = address;
+            document.getElementById('CONTACT').value = contact;
+            document.getElementById('DESC').value = description;
+            document.querySelector('input[name="ID"]').value = id;
         });
     });
 

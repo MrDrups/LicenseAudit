@@ -14,16 +14,25 @@ import java.util.Set;
 public class License {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long L01_ID;
+    @Column(name = "L01_ID")
+    private Long ID;
 
-    @Column(columnDefinition = "TEXT")
-    private String L01_KEY;
+    @Column(name="L01_KEY", columnDefinition = "TEXT")
+    private String KEY;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate L01_START_DATE;
+    @Column(name = "L01_START_DATE")
+    private LocalDate START_DATE;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate L01_END_DATE;
-    private boolean L01_REVOKED;
-    private boolean L01_EXTENDED;
+    @Column(name = "L01_END_DATE")
+    private LocalDate END_DATE;
+
+    @Column(name = "L01_REVOKED")
+    private boolean REVOKED;
+
+    @Column(name = "L01_EXTENDED")
+    private boolean EXTENDED;
 
     @OneToMany(mappedBy = "license")
     private Set<LicenseLog> licenseLogs;
@@ -41,14 +50,14 @@ public class License {
     @Override
     public String toString() {
         return "License{" +
-                "ID=" + L01_ID +
-                ", Key='" + L01_KEY + '\'' +
-                ", Company=" + (company != null ? company.getC01_NAME() : "null") +
-                ", LicensePlan=" + (licensePlan != null ? licensePlan.getLP01_NAME() : "null") +
-                ", StartDate=" + L01_START_DATE +
-                ", EndDate=" + L01_END_DATE +
-                ", Revoked=" + L01_REVOKED +
-                ", Extended=" + L01_EXTENDED +
+                "ID=" + ID +
+                ", Key='" + KEY + '\'' +
+                ", Company=" + (company != null ? company.getNAME() : "null") +
+                ", LicensePlan=" + (licensePlan != null ? licensePlan.getNAME() : "null") +
+                ", StartDate=" + START_DATE +
+                ", EndDate=" + END_DATE +
+                ", Revoked=" + REVOKED +
+                ", Extended=" + EXTENDED +
                 '}';
     }
 }

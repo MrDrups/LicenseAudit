@@ -25,7 +25,7 @@ public class CompaniesController {
 
     @PostMapping("/companies/save")
     public String saveCompany(@ModelAttribute("company") Company company) {
-        if (company.getC01_ID() != null && company.getC01_ID() > 0) {
+        if (company.getID() != null && company.getID() > 0) {
             companyService.saveCompany(company);
         } else {
             companyService.saveCompany(company);

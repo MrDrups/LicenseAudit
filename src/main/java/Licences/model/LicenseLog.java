@@ -12,18 +12,20 @@ import java.sql.Timestamp;
 public class LicenseLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long LL01_ID;
+    @Column(name = "LL01_ID")
+    private Long ID;
 
-    @Column(columnDefinition = "TEXT")
-    private String LL01_CHANGE_TYPE;
+    @Column(name = "LL01_CHANGE_TYPE", columnDefinition = "TEXT")
+    private String CHANGE_TYPE;
 
-    private Timestamp LL01_CHANGE_DATE;
+    @Column(name = "LL01_CHANGE_DATE")
+    private Timestamp CHANGE_DATE;
 
-    @Column(columnDefinition = "TEXT")
-    private String LL01_OLD_VALUE;
+    @Column(name = "LL01_OLD_VALUE", columnDefinition = "TEXT")
+    private String OLD_VALUE;
 
-    @Column(columnDefinition = "TEXT")
-    private String LL01_NEW_VALUE;
+    @Column(name="LL01_NEW_VALUE", columnDefinition = "TEXT")
+    private String NEW_VALUE;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.SET_NULL)

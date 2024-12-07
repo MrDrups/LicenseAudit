@@ -12,9 +12,9 @@ import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role,Long> {
-    @Query("SELECT r FROM R01_ROLE r WHERE r.R01_NAME = :name")
+    @Query("SELECT r FROM R01_ROLE r WHERE r.NAME = :name")
     Optional<Role> findByName(@Param("name") String name);
 
-    @Query("SELECT r FROM R01_ROLE r WHERE concat(r.R01_NAME, ' ',r.R01_ID) LIKE %?1%")
+    @Query("SELECT r FROM R01_ROLE r WHERE concat(r.NAME, ' ',r.ID) LIKE %?1%")
     List<Role> search(String keyword);
 }

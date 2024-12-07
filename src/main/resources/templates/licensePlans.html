@@ -116,18 +116,18 @@
                 </thead>
                 <tbody id="LicenseTableBody">
                 <tr class="text-center align-middle" th:each="licensePlan : ${licensePlans}">
-                    <td class="name-cell text-start" th:text="${licensePlan.LP01_NAME}"></td>
-                    <td class="max-users-cell" th:text="${licensePlan.LP01_MAX_USERS}"></td>
-                    <td class="price-cell" th:text="${licensePlan.LP01_PRICE}"></td>
+                    <td class="name-cell text-start" th:text="${licensePlan.NAME}"></td>
+                    <td class="max-users-cell" th:text="${licensePlan.MAX_USERS}"></td>
+                    <td class="price-cell" th:text="${licensePlan.PRICE}"></td>
                     <td sec:authorize="hasRole('ADMIN')">
                         <button
                                 type="button"
                                 class="btn btn-outline-primary"
                                 data-bs-toggle="modal" data-bs-target="#LicensePlanModal"
-                                th:data-id="${licensePlan.LP01_ID}"
-                                th:data-name="${licensePlan.LP01_NAME}"
-                                th:data-max-users="${licensePlan.LP01_MAX_USERS}"
-                                th:data-price="${licensePlan.LP01_PRICE}">
+                                th:data-id="${licensePlan.ID}"
+                                th:data-name="${licensePlan.NAME}"
+                                th:data-max-users="${licensePlan.MAX_USERS}"
+                                th:data-price="${licensePlan.PRICE}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                  class="bi bi-pencil-square text-primary" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
@@ -136,7 +136,7 @@
                             </svg>
                         </button>
                         <a class="btn btn-outline-danger"
-                           th:href="@{license_plans/delete/{id}(id=${licensePlan.LP01_ID})}">
+                           th:href="@{license_plans/delete/{id}(id=${licensePlan.ID})}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                  class="bi bi-trash text-danger" viewBox="0 0 16 16">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
@@ -167,7 +167,7 @@
             <form th:action="@{/license_plans/save}" method="post">
                 <div class="modal-header">
                     <h5 class="modal-title" id="LicensePlanModalLabel"
-                        th:text="${licensePlan.LP01_ID != null ? 'Редактировать план' : 'Добавить план'}"></h5>
+                        th:text="${licensePlan.ID != null ? 'Редактировать план' : 'Добавить план'}"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">
@@ -177,18 +177,18 @@
                             <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5V13a1 1 0 0 0 1 1V1.5a.5.5 0 0 1 .5-.5H14a1 1 0 0 0-1-1z"/>
                             <path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v11A1.5 1.5 0 0 0 3.5 16h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 16 9.586V3.5A1.5 1.5 0 0 0 14.5 2zM3 3.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 .5.5V9h-4.5A1.5 1.5 0 0 0 9 10.5V15H3.5a.5.5 0 0 1-.5-.5zm7 11.293V10.5a.5.5 0 0 1 .5-.5h4.293z"/>
                         </svg>
-                        <label for="LP01_NAME" class="form-label">Название плана</label>
-                        <input type="text" class="form-control" id="LP01_NAME" name="LP01_NAME"
-                               th:value="${licensePlan.LP01_NAME}" required>
+                        <label for="NAME" class="form-label">Название плана</label>
+                        <input type="text" class="form-control" id="NAME" name="NAME"
+                               th:value="${licensePlan.NAME}" required>
                     </div>
                     <div class="mb-3">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              class="bi bi-person" viewBox="0 0 16 16">
                             <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
                         </svg>
-                        <label for="LP01_MAX_USERS" class="form-label">Максимальное число пользователей</label>
-                        <input type="number" placeholder="1" class="form-control" id="LP01_MAX_USERS"
-                               name="LP01_MAX_USERS" th:value="${licensePlan.LP01_MAX_USERS}" required>
+                        <label for="MAX_USERS" class="form-label">Максимальное число пользователей</label>
+                        <input type="number" placeholder="1" class="form-control" id="MAX_USERS"
+                               name="MAX_USERS" th:value="${licensePlan.MAX_USERS}" required>
                     </div>
                     <div class="mb-3">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -196,11 +196,11 @@
                             <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
                             <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2z"/>
                         </svg>
-                        <label for="LP01_PRICE" class="form-label">Цена в тыс.руб</label>
-                        <input type="number" placeholder="1.0" step="0.01" class="form-control" id="LP01_PRICE"
-                               name="LP01_PRICE" th:value="${licensePlan.LP01_PRICE}" required>
+                        <label for="PRICE" class="form-label">Цена в тыс.руб</label>
+                        <input type="number" placeholder="1.0" step="0.01" class="form-control" id="PRICE"
+                               name="PRICE" th:value="${licensePlan.PRICE}" required>
                     </div>
-                    <input type="hidden" name="LP01_ID" th:value="${licensePlan.LP01_ID}">
+                    <input type="hidden" name="ID" th:value="${licensePlan.ID}">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
@@ -221,10 +221,10 @@
             let max_users = button.getAttribute('data-max-users');
             let price = button.getAttribute('data-price');
 
-            document.getElementById('LP01_NAME').value = name;
-            document.getElementById('LP01_MAX_USERS').value = max_users;
-            document.getElementById('LP01_PRICE').value = price;
-            document.querySelector('input[name="LP01_ID"]').value = id;
+            document.getElementById('NAME').value = name;
+            document.getElementById('MAX_USERS').value = max_users;
+            document.getElementById('PRICE').value = price;
+            document.querySelector('input[name="ID"]').value = id;
         });
     });
 

@@ -25,7 +25,7 @@ public class LicensePlanController {
 
     @PostMapping("/license_plans/save")
     public String saveLicensePlan(@ModelAttribute("licensePlan") LicensePlan licensePlan) {
-        if (licensePlan.getLP01_ID() != null && licensePlan.getLP01_ID() > 0) {
+        if (licensePlan.getID() != null && licensePlan.getID() > 0) {
             licensePlanService.saveLicensePlan(licensePlan);
         } else {
             licensePlanService.saveLicensePlan(licensePlan);

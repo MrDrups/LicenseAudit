@@ -10,19 +10,20 @@ import java.util.Set;
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long C01_ID;
+    @Column(name = "C01_ID")
+    private Long ID;
 
-    @Column(columnDefinition = "TEXT")
-    private String C01_NAME;
+    @Column(name = "C01_NAME", columnDefinition = "TEXT")
+    private String NAME;
 
-    @Column(columnDefinition = "TEXT")
-    private String C01_ADRESS;
+    @Column(name = "C01_ADDRESS", columnDefinition = "TEXT")
+    private String ADDRESS;
 
-    @Column(columnDefinition = "TEXT")
-    private String C01_CONTACT;
+    @Column(name = "C01_CONTACT",columnDefinition = "TEXT")
+    private String CONTACT;
 
-    @Column(columnDefinition = "TEXT")
-    private String C01_DESC;
+    @Column(name = "C01_DESC", columnDefinition = "TEXT")
+    private String DESC;
 
     @OneToMany(mappedBy = "company")
     private Set<License> licenses;

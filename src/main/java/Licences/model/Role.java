@@ -12,10 +12,11 @@ import java.util.Set;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long R01_ID;
+    @Column(name = "R01_ID")
+    private long ID;
 
-    @Column(columnDefinition = "TEXT", unique = true)
-    private String R01_NAME;
+    @Column(name = "R01_NAME",columnDefinition = "TEXT", unique = true)
+    private String NAME;
 
     @OneToMany(mappedBy = "role")
     private Set<User> users;

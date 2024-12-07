@@ -26,7 +26,7 @@ public class LicensePlanService {
     }
 
     public void saveLicensePlan(LicensePlan licensePlan) {
-        if (licensePlan.getLP01_ID() != null && licensePlan.getLP01_ID() > 0) {
+        if (licensePlan.getID() != null && licensePlan.getID() > 0) {
             licensePlanRepository.save(licensePlan);
         } else {
             licensePlanRepository.save(licensePlan);

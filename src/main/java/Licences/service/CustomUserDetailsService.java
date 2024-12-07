@@ -25,13 +25,13 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + username));
 
         return new org.springframework.security.core.userdetails.User(
-                user.getU01_LOGIN(),
-                user.getU01_PASS(),
+                user.getLOGIN(),
+                user.getPASS(),
                 getAuthorities(user.getRole())
         );
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(Role role) {
-        return Set.of(new SimpleGrantedAuthority("ROLE_" + role.getR01_NAME()));
+        return Set.of(new SimpleGrantedAuthority("ROLE_" + role.getNAME()));
     }
 }

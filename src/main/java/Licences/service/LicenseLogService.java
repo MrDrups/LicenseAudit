@@ -14,21 +14,22 @@ import java.sql.Timestamp;
 @RequiredArgsConstructor
 public class LicenseLogService {
     private final LicenseLogRepository licenseLogRepository;
+    private final CurrentUserProvider currentUserProvider;
 
     public void createLog(String changeType, License oldLicense, License newLicense) {
-        User currentUser = CurrentUserProvider.getCurrentUser();
+        User currentUser = currentUserProvider.getCurrentUser();
         LicenseLog log = new LicenseLog();
-        log.setLL01_CHANGE_TYPE(changeType);
-        log.setLL01_CHANGE_DATE(new Timestamp(System.currentTimeMillis()));
+        log.setCHANGE_TYPE(changeType);
+        log.setCHANGE_DATE(new Timestamp(System.currentTimeMillis()));
         log.setUser(currentUser);
         log.setLicense(newLicense != null ? newLicense : oldLicense);
 
         if (oldLicense != null) {
-            log.setLL01_OLD_VALUE(oldLicense.toString());
+            log.setOLD_VALUE(oldLicense.toString());
         }
 
         if (newLicense != null) {
-            log.setLL01_NEW_VALUE(newLicense.toString());
+            log.setNEW_VALUE(newLicense.toString());
         }
 
         licenseLogRepository.save(log);

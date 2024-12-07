@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ru">
 <th:block th:replace="~{fragments/header :: commonHead}"></th:block>
 <body style="background-color: #dee2e6">
 <nav class="navbar navbar-light navbar-expand-lg shadow-lg rounded-bottom" style="background-color: #f8f9fa;">
@@ -124,33 +124,33 @@
                     <tbody id="LogTableBody">
                     <tr th:each="log : ${licenseLogs}">
                         <td class="text-start">
-                            <span class="badge bg-success" th:if="${log.LL01_CHANGE_TYPE == 'CREATE'}">
+                            <span class="badge bg-success" th:if="${log.CHANGE_TYPE == 'CREATE'}">
                             CREATE
                             </span>
-                            <span class="badge bg-secondary" th:if="${log.LL01_CHANGE_TYPE == 'UPDATE'}">
+                            <span class="badge bg-secondary" th:if="${log.CHANGE_TYPE == 'UPDATE'}">
                             UPDATE
                             </span>
-                            <span class="badge bg-danger" th:if="${log.LL01_CHANGE_TYPE == 'DELETE'}">
+                            <span class="badge bg-danger" th:if="${log.CHANGE_TYPE == 'DELETE'}">
                             DELETE
                             </span>
                         </td>
                         <td>
                             <samp class="text-secondary"
-                                  th:text="${#dates.format(log.LL01_CHANGE_DATE, 'yyyy-MM-dd HH:mm:ss')}"></samp>
+                                  th:text="${#dates.format(log.CHANGE_DATE, 'yyyy-MM-dd HH:mm:ss')}"></samp>
                         </td>
 
                         <td>
-                            <i th:if="${log.LL01_OLD_VALUE == '-----'}" class="bi bi-dash"></i>
-                            <span th:unless="${log.LL01_OLD_VALUE == '-----'}" th:text="${log.LL01_OLD_VALUE}"></span>
+                            <i th:if="${log.OLD_VALUE == '-----'}" class="bi bi-dash"></i>
+                            <span th:unless="${log.OLD_VALUE == '-----'}" th:text="${log.OLD_VALUE}"></span>
                         </td>
                         <td>
-                            <i th:if="${log.LL01_NEW_VALUE == '-----'}" class="bi bi-dash"></i>
-                            <span th:unless="${log.LL01_NEW_VALUE == '-----'}" th:text="${log.LL01_NEW_VALUE}"></span>
+                            <i th:if="${log.NEW_VALUE == '-----'}" class="bi bi-dash"></i>
+                            <span th:unless="${log.NEW_VALUE == '-----'}" th:text="${log.NEW_VALUE}"></span>
                         </td>
 
-                        <td class="text-center" th:text="${log.user.u01_LOGIN}"></td>
+                        <td class="text-center" th:text="${log.user.LOGIN}"></td>
                         <td class="text-center"
-                            th:text="${log.license != null ? log.license.l01_ID : 'Нет данных'}"></td>
+                            th:text="${log.license != null ? log.license.ID : 'Нет данных'}"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -186,20 +186,20 @@
                 </thead>
                 <tbody id="UserTableBody">
                 <tr th:each="user : ${users}">
-                    <td th:text="${user.u01_NAME}"></td>
-                    <td th:text="${user.u01_LOGIN}"></td>
-                    <td th:text="${user.u01_EMAIL}"></td>
-                    <td th:text="${user.role.r01_NAME}"></td>
+                    <td th:text="${user.NAME}"></td>
+                    <td th:text="${user.LOGIN}"></td>
+                    <td th:text="${user.EMAIL}"></td>
+                    <td th:text="${user.role.NAME}"></td>
                     <td>
                         <button
                                 type="button"
                                 class="btn btn-outline-primary"
                                 data-bs-toggle="modal" data-bs-target="#UserModal"
-                                th:data-id="${user.u01_ID}"
-                                th:data-name="${user.u01_NAME}"
-                                th:data-login="${user.u01_LOGIN}"
-                                th:data-email="${user.u01_EMAIL}"
-                                th:data-role-name="${user.role.r01_NAME}">
+                                th:data-id="${user.ID}"
+                                th:data-name="${user.NAME}"
+                                th:data-login="${user.LOGIN}"
+                                th:data-email="${user.EMAIL}"
+                                th:data-role-name="${user.role.NAME}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                  class="bi bi-pencil-square text-primary" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
@@ -208,7 +208,7 @@
                             </svg>
                         </button>
                         <a class="btn btn-outline-danger"
-                           th:href="@{admin/delete/{id}(id=${user.u01_ID})}">
+                           th:href="@{admin/delete/{id}(id=${user.ID})}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                  class="bi bi-trash text-danger" viewBox="0 0 16 16">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
@@ -368,21 +368,21 @@
                             <i class="bi bi-person-badge"></i>
                             Имя
                         </label>
-                        <input type="text" class="form-control" id="UserName" name="u01_NAME" required>
+                        <input type="text" class="form-control" id="UserName" name="NAME" required>
                     </div>
                     <div class="mb-3">
                         <label for="UserLogin" class="form-label">
                             <i class="bi bi-person"></i>
                             Логин
                         </label>
-                        <input type="text" class="form-control" id="UserLogin" name="u01_LOGIN" required>
+                        <input type="text" class="form-control" id="UserLogin" name="LOGIN" required>
                     </div>
                     <div class="mb-3">
                         <label for="UserEmail" class="form-label">
                             <i class="bi bi-envelope"></i>
                             E-Mail
                         </label>
-                        <input type="email" class="form-control" id="UserEmail" name="U01_EMAIL" required>
+                        <input type="email" class="form-control" id="UserEmail" name="EMAIL" required>
                     </div>
                     <div class="mb-3">
                         <label for="UserRole" class="form-label">
@@ -391,11 +391,11 @@
                         </label>
                         <select class="form-select" id="UserRole" name="roleId" required>
                             <option value="" disabled selected>Выберите роль</option>
-                            <option th:each=" role: ${roles}" th:value="${role.r01_ID}"
-                                    th:text="${role.r01_NAME}"></option>
+                            <option th:each=" role: ${roles}" th:value="${role.ID}"
+                                    th:text="${role.NAME}"></option>
                         </select>
                     </div>
-                    <input type="hidden" name="u01_ID" id="UserId">
+                    <input type="hidden" name="ID" id="UserId">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>

@@ -13,19 +13,20 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long U01_ID;
+    @Column(name = "U01_ID")
+    private long ID;
 
-    @Column(columnDefinition = "TEXT")
-    private String U01_NAME;
+    @Column(name = "U01_NAME", columnDefinition = "TEXT")
+    private String NAME;
 
     @Column(name = "U01_LOGIN", columnDefinition = "TEXT", unique = true)
-    private String U01_LOGIN;
+    private String LOGIN;
 
-    @Column(columnDefinition = "TEXT")
-    private String U01_PASS;
+    @Column(name = "U01_PASS", columnDefinition = "TEXT")
+    private String PASS;
 
-    @Column(columnDefinition = "TEXT", unique = true)
-    private String U01_EMAIL;
+    @Column(name = "U01_EMAIL", columnDefinition = "TEXT", unique = true)
+    private String EMAIL;
 
     @ManyToOne
     @JoinColumn(name = "R01_ID", referencedColumnName = "R01_ID")

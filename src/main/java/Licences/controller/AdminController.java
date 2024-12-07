@@ -37,15 +37,15 @@ public class AdminController {
         List<Object[]> licensesByCompanies = licenseRepository.countByCompany();
         List<Object[]> licensesByPlans = licenseRepository.countLicensesByLicensePlan();
         for (LicenseLog log : licenseLogs) {
-            if (log.getLL01_OLD_VALUE() != null) {
-                log.setLL01_OLD_VALUE(formatLicense(log.getLicense()));
+            if (log.getOLD_VALUE() != null) {
+                log.setOLD_VALUE(formatLicense(log.getLicense()));
             } else {
-                log.setLL01_OLD_VALUE("-----");
+                log.setOLD_VALUE("-----");
             }
-            if (log.getLL01_NEW_VALUE() != null) {
-                log.setLL01_NEW_VALUE(formatLicense(log.getLicense()));
+            if (log.getNEW_VALUE() != null) {
+                log.setNEW_VALUE(formatLicense(log.getLicense()));
             } else {
-                log.setLL01_NEW_VALUE("-----");
+                log.setNEW_VALUE("-----");
             }
         }
         model.addAttribute("roles", roles);
@@ -61,13 +61,13 @@ public class AdminController {
 
     @PostMapping("/admin/save")
     public String saveUser(@ModelAttribute User user, @RequestParam Long roleId) {
-        Optional<User> existingUser = userRepository.findById(user.getU01_ID());
+        Optional<User> existingUser = userRepository.findById(user.getID());
         Optional<Role> existingRole = roleRepository.findById(roleId);
         if (existingUser.isPresent() && existingRole.isPresent()) {
             User updatedUser = existingUser.get();
-            updatedUser.setU01_NAME(user.getU01_NAME());
-            updatedUser.setU01_LOGIN(user.getU01_LOGIN());
-            updatedUser.setU01_EMAIL(user.getU01_EMAIL());
+            updatedUser.setNAME(user.getNAME());
+            updatedUser.setLOGIN(user.getLOGIN());
+            updatedUser.setEMAIL(user.getEMAIL());
             updatedUser.setRole(existingRole.get());
             userRepository.save(updatedUser);
         }
@@ -92,6 +92,6 @@ public class AdminController {
         if (license == null) {
             return "-----";
         }
-        return String.format("Ключ: %s, Компания: %s, Лиц.План: %s, Начало: %s, Конец: %s, Отозвана: %s, Продлена: %s", license.getL01_KEY(), license.getCompany() != null ? license.getCompany().getC01_NAME() : "-----", license.getLicensePlan() != null ? license.getLicensePlan().getLP01_NAME() : "-----", license.getL01_START_DATE() != null ? license.getL01_START_DATE().toString() : "-----", license.getL01_END_DATE() != null ? license.getL01_END_DATE().toString() : "-----", license.isL01_REVOKED() ? "ДА" : "НЕТ", license.isL01_EXTENDED() ? "ДА" : "НЕТ");
+        return String.format("Ключ: %s, Компания: %s, Лиц.План: %s, Начало: %s, Конец: %s, Отозвана: %s, Продлена: %s", license.getKEY(), license.getCompany() != null ? license.getCompany().getNAME() : "-----", license.getLicensePlan() != null ? license.getLicensePlan().getNAME() : "-----", license.getSTART_DATE() != null ? license.getSTART_DATE().toString() : "-----", license.getEND_DATE() != null ? license.getEND_DATE().toString() : "-----", license.isREVOKED() ? "ДА" : "НЕТ", license.isEXTENDED() ? "ДА" : "НЕТ");
     }
 }

@@ -51,11 +51,11 @@ public class ApiController {
     @PutMapping("/licenses/{id}")
     public ResponseEntity<LicenseDTO> updateLicense(@PathVariable Long id, @RequestBody LicenseDTO licenseDTO) {
         return licenseRepository.findById(id).map(existingLicense -> {
-            if (licenseDTO.getKey() != null) existingLicense.setL01_KEY(licenseDTO.getKey());
-            if (licenseDTO.getStartDate() != null) existingLicense.setL01_START_DATE(licenseDTO.getStartDate());
-            if (licenseDTO.getEndDate() != null) existingLicense.setL01_END_DATE(licenseDTO.getEndDate());
-            existingLicense.setL01_REVOKED(licenseDTO.isRevoked());
-            existingLicense.setL01_EXTENDED(licenseDTO.isExtended());
+            if (licenseDTO.getKey() != null) existingLicense.setKEY(licenseDTO.getKey());
+            if (licenseDTO.getStartDate() != null) existingLicense.setSTART_DATE(licenseDTO.getStartDate());
+            if (licenseDTO.getEndDate() != null) existingLicense.setEND_DATE(licenseDTO.getEndDate());
+            existingLicense.setREVOKED(licenseDTO.isRevoked());
+            existingLicense.setEXTENDED(licenseDTO.isExtended());
             if (licenseDTO.getCompanyId() != null) {
                 existingLicense.setCompany(companyRepository.findById(licenseDTO.getCompanyId()).orElse(null));
             }
@@ -100,10 +100,10 @@ public class ApiController {
     @PutMapping("/companies/{id}")
     public ResponseEntity<CompanyDTO> updateCompany(@PathVariable Long id, @RequestBody CompanyDTO companyDTO) {
         return companyRepository.findById(id).map(existingCompany -> {
-            if (companyDTO.getName() != null) existingCompany.setC01_NAME(companyDTO.getName());
-            if (companyDTO.getAddress() != null) existingCompany.setC01_ADRESS(companyDTO.getAddress());
-            if (companyDTO.getContact() != null) existingCompany.setC01_CONTACT(companyDTO.getContact());
-            if (companyDTO.getDescription() != null) existingCompany.setC01_DESC(companyDTO.getDescription());
+            if (companyDTO.getName() != null) existingCompany.setNAME(companyDTO.getName());
+            if (companyDTO.getAddress() != null) existingCompany.setADDRESS(companyDTO.getAddress());
+            if (companyDTO.getContact() != null) existingCompany.setCONTACT(companyDTO.getContact());
+            if (companyDTO.getDescription() != null) existingCompany.setDESC(companyDTO.getDescription());
             return companyRepository.save(existingCompany);
         }).map(CompanyMapper::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
@@ -143,9 +143,9 @@ public class ApiController {
     @PutMapping("/license-plans/{id}")
     public ResponseEntity<LicensePlanDTO> updateLicensePlan(@PathVariable Long id, @RequestBody LicensePlanDTO licensePlanDTO) {
         return licensePlanRepository.findById(id).map(existingPlan -> {
-            if (licensePlanDTO.getName() != null) existingPlan.setLP01_NAME(licensePlanDTO.getName());
-            if (licensePlanDTO.getMaxUsers() != null) existingPlan.setLP01_MAX_USERS(licensePlanDTO.getMaxUsers());
-            if (licensePlanDTO.getPrice() != null) existingPlan.setLP01_PRICE(licensePlanDTO.getPrice());
+            if (licensePlanDTO.getName() != null) existingPlan.setNAME(licensePlanDTO.getName());
+            if (licensePlanDTO.getMaxUsers() != null) existingPlan.setMAX_USERS(licensePlanDTO.getMaxUsers());
+            if (licensePlanDTO.getPrice() != null) existingPlan.setPRICE(licensePlanDTO.getPrice());
             return licensePlanRepository.save(existingPlan);
         }).map(LicensePlanMapper::toDTO).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }

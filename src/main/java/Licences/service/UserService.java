@@ -23,10 +23,10 @@ public class UserService {
         Role role = roleRepository.findByName("USER")
                 .orElseThrow(() -> new RuntimeException("Роль не найдена"));
         User user = new User();
-        user.setU01_NAME(name);
-        user.setU01_LOGIN(login);
-        user.setU01_PASS(passwordEncoder.encode(password));
-        user.setU01_EMAIL(email);
+        user.setNAME(name);
+        user.setLOGIN(login);
+        user.setPASS(passwordEncoder.encode(password));
+        user.setEMAIL(email);
         user.setRole(role);
         userRepository.save(user);
     }

@@ -21,8 +21,8 @@ public class LicenseService {
     public void saveLicense(License license, Long companyId, Long licensePlanId) {
         License oldLicense = null;
 
-        if (license.getL01_ID() != null) {
-            oldLicense = licenseRepository.findById(license.getL01_ID()).orElse(null);
+        if (license.getID() != null) {
+            oldLicense = licenseRepository.findById(license.getID()).orElse(null);
         }
         // Установка связей
         if (companyId != null) {

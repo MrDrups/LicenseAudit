@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ru">
 <th:block th:replace="~{fragments/header :: commonHead}"></th:block>
 
 <body style="background-color: #dee2e6">
@@ -161,21 +161,21 @@
                 </thead>
                 <tbody id="LicenseTableBody">
                 <tr class="text-center align-middle" th:each="license : ${licenses}">
-                    <td class="text-start" th:text="${license.l01_KEY}"></td>
-                    <td class="text-start" th:text="${license.company.c01_NAME}"></td>
-                    <td class="text-start" th:text="${license.licensePlan.LP01_NAME}"></td>
+                    <td class="text-start" th:text="${license.KEY}"></td>
+                    <td class="text-start" th:text="${license.company.NAME}"></td>
+                    <td class="text-start" th:text="${license.licensePlan.NAME}"></td>
                     <td>
-                        <samp class="text-secondary" th:text="${license.l01_START_DATE}"></samp>
+                        <samp class="text-secondary" th:text="${license.START_DATE}"></samp>
                     </td>
                     <td>
-                        <samp class="text-secondary" th:text="${license.l01_END_DATE}"></samp>
+                        <samp class="text-secondary" th:text="${license.END_DATE}"></samp>
                     </td>
                     <td class="days-remaining"></td>
                     <td>
-                    <span class="badge bg-danger" th:if="${license.l01_REVOKED}">
+                    <span class="badge bg-danger" th:if="${license.REVOKED}">
                         Отозвана
                     </span>
-                        <span th:if="${!license.l01_REVOKED}">
+                        <span th:if="${!license.REVOKED}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              class="bi bi-dash-lg text-secondary" viewBox="0 0 16 16">
                           <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 8"/>
@@ -183,10 +183,10 @@
                     </span>
                     </td>
                     <td>
-                    <span class="badge bg-success" th:if="${license.l01_EXTENDED}">
+                    <span class="badge bg-success" th:if="${license.EXTENDED}">
                         Продлена
                     </span>
-                        <span th:if="${!license.l01_EXTENDED}">
+                        <span th:if="${!license.EXTENDED}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              class="bi bi-dash-lg text-secondary" viewBox="0 0 16 16">
                           <path fill-rule="evenodd" d="M2 8a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11A.5.5 0 0 1 2 8"/>
@@ -196,14 +196,14 @@
                     <td sec:authorize="hasRole('ADMIN')" style="text-align: center;">
                         <button class="btn btn-outline-primary"
                                 data-bs-toggle="modal" data-bs-target="#LicenseModal"
-                                th:data-id="${license.l01_ID}"
-                                th:data-key="${license.l01_KEY}"
-                                th:data-company-id="${license.company.c01_ID}"
-                                th:data-plan-id="${license.licensePlan.LP01_ID}"
-                                th:data-start-date="${license.l01_START_DATE}"
-                                th:data-end-date="${license.l01_END_DATE}"
-                                th:data-revoked="${license.l01_REVOKED}"
-                                th:data-extended="${license.l01_EXTENDED}">
+                                th:data-id="${license.ID}"
+                                th:data-key="${license.KEY}"
+                                th:data-company-id="${license.company.ID}"
+                                th:data-plan-id="${license.licensePlan.ID}"
+                                th:data-start-date="${license.START_DATE}"
+                                th:data-end-date="${license.END_DATE}"
+                                th:data-revoked="${license.REVOKED}"
+                                th:data-extended="${license.EXTENDED}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                  class="bi bi-pencil-square text-primary" viewBox="0 0 16 16">
                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
@@ -211,7 +211,7 @@
                                       d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                             </svg>
                         </button>
-                        <a class="btn btn-outline-danger" th:href="@{/delete/{id}(id=${license.l01_ID})}">
+                        <a class="btn btn-outline-danger" th:href="@{/delete/{id}(id=${license.ID})}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                                  class="bi bi-trash text-danger" viewBox="0 0 16 16">
                                 <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
@@ -254,7 +254,7 @@
                             <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
                         </svg>
                         <label for="licenseKey" class="form-label">Ключ</label>
-                        <input type="text" class="form-control" id="licenseKey" name="L01_KEY" required>
+                        <input type="text" class="form-control" id="licenseKey" name="KEY" required>
                     </div>
                     <div class="mb-3">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -265,8 +265,8 @@
                         <label for="companyId" class="form-label">Компания</label>
                         <select class="form-select" id="companyId" name="companyId" required>
                             <option value="" disabled selected>Выберите компанию</option>
-                            <option th:each="company : ${companies}" th:value="${company.c01_ID}"
-                                    th:text="${company.c01_NAME}"></option>
+                            <option th:each="company : ${companies}" th:value="${company.ID}"
+                                    th:text="${company.NAME}"></option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -278,8 +278,8 @@
                         <label for="licensePlanId" class="form-label">Лицензионный план</label>
                         <select class="form-select" id="licensePlanId" name="licensePlanId" required>
                             <option value="" disabled selected>Выберите план</option>
-                            <option th:each="plan : ${licensePlans}" th:value="${plan.LP01_ID}"
-                                    th:text="${plan.LP01_NAME}"></option>
+                            <option th:each="plan : ${licensePlans}" th:value="${plan.ID}"
+                                    th:text="${plan.NAME}"></option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -289,7 +289,7 @@
                             <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5zM8 8a.5.5 0 0 1 .5.5V10H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V11H6a.5.5 0 0 1 0-1h1.5V8.5A.5.5 0 0 1 8 8"/>
                         </svg>
                         <label for="startDate" class="form-label">Дата начала</label>
-                        <input type="date" class="form-control" id="startDate" name="L01_START_DATE" required>
+                        <input type="date" class="form-control" id="startDate" name="START_DATE" required>
                     </div>
                     <div class="mb-3">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -299,7 +299,7 @@
                             <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z"/>
                         </svg>
                         <label for="endDate" class="form-label">Дата окончания</label>
-                        <input type="date" class="form-control" id="endDate" name="L01_END_DATE" required>
+                        <input type="date" class="form-control" id="endDate" name="END_DATE" required>
                     </div>
                     <div class="mb-3 form-check">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -307,7 +307,7 @@
                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                             <path d="M11.354 4.646a.5.5 0 0 0-.708 0l-6 6a.5.5 0 0 0 .708.708l6-6a.5.5 0 0 0 0-.708"/>
                         </svg>
-                        <input type="checkbox" class="form-check-input" id="revoked" name="L01_REVOKED">
+                        <input type="checkbox" class="form-check-input" id="revoked" name="REVOKED">
                         <label for="revoked" class="form-check-label">Отозвана</label>
                     </div>
                     <div class="mb-3 form-check">
@@ -317,10 +317,10 @@
                             <path fill-rule="evenodd"
                                   d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5 5 0 0 0 8 3M3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9z"/>
                         </svg>
-                        <input type="checkbox" class="form-check-input" id="extended" name="L01_EXTENDED">
+                        <input type="checkbox" class="form-check-input" id="extended" name="EXTENDED">
                         <label for="extended" class="form-check-label">Продлена</label>
                     </div>
-                    <input type="hidden" name="L01_ID" id="licenseId">
+                    <input type="hidden" name="ID" id="licenseId">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Отмена</button>

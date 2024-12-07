@@ -11,14 +11,17 @@ import java.util.Set;
 public class LicensePlan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long LP01_ID;
+    @Column(name = "LP01_ID")
+    private Long ID;
 
-    @Column(columnDefinition = "TEXT")
-    private String LP01_NAME;
+    @Column(name = "LP01_NAME", columnDefinition = "TEXT")
+    private String NAME;
 
-    private Long LP01_MAX_USERS;
+    @Column(name = "LP01_MAX_USERS")
+    private Long MAX_USERS;
 
-    private BigDecimal LP01_PRICE;
+    @Column(name = "LP01_PRICE")
+    private BigDecimal PRICE;
 
     @OneToMany(mappedBy = "licensePlan")
     private Set<License> licenses;

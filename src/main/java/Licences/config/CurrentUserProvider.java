@@ -11,13 +11,14 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CurrentUserProvider {
-    private static UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public static User getCurrentUser() {
+    public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
             String username = ((UserDetails) authentication.getPrincipal()).getUsername();
-            return userRepository.findByLogin(username).orElseThrow(() -> new RuntimeException("Пользователь не найден: " + username));
+            return userRepository.findByLogin(username)
+                    .orElseThrow(() -> new RuntimeException("Пользователь не найден: " + username));
         }
         throw new RuntimeException("Не удалось определить текущего пользователя.");
     }

@@ -18,17 +18,17 @@ public class DataInitializer {
         return args -> {
             Role adminRole = roleRepository.findByName("ADMIN").orElseGet(() -> {
                 Role role = new Role();
-                role.setR01_NAME("ADMIN");
+                role.setNAME("ADMIN");
                 return roleRepository.save(role);
             });
 
             Optional<User> rootUser = userRepository.findByLogin("root");
             if (rootUser.isEmpty()) {
                 User user = new User();
-                user.setU01_NAME("Admin");
-                user.setU01_LOGIN("root");
-                user.setU01_PASS(passwordEncoder.encode("root"));
-                user.setU01_EMAIL("root@root.ru");
+                user.setNAME("Admin");
+                user.setLOGIN("root");
+                user.setPASS(passwordEncoder.encode("root"));
+                user.setEMAIL("root@root.ru");
                 user.setRole(adminRole);
                 userRepository.save(user);
             }

@@ -29,7 +29,7 @@ public class CompanyService {
 
     public void saveCompany(Company company) {
         // Если компания имеет ID (т.е. это редактирование), то обновляем её
-        if (company.getC01_ID() != null && company.getC01_ID() > 0) {
+        if (company.getID() != null && company.getID() > 0) {
             companyRepository.save(company); // Обновляем существующую компанию
         } else {
             companyRepository.save(company); // Создаем новую компанию
