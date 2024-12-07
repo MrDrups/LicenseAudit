@@ -26,5 +26,4 @@ public class Company {
 
     @OneToMany(mappedBy = "company")
     private Set<License> licenses;
-
 }

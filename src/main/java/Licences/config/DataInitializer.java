@@ -13,19 +13,12 @@ import java.util.Optional;
 
 @Configuration
 public class DataInitializer {
-
     @Bean
     public CommandLineRunner initializeData(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             Role adminRole = roleRepository.findByName("ADMIN").orElseGet(() -> {
                 Role role = new Role();
                 role.setR01_NAME("ADMIN");
-                return roleRepository.save(role);
-            });
-
-            Role userRole = roleRepository.findByName("USER").orElseGet(() -> {
-                Role role = new Role();
-                role.setR01_NAME("USER");
                 return roleRepository.save(role);
             });
 

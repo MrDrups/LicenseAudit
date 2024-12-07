@@ -1,11 +1,10 @@
 package Licences.service;
 
-import Licences.model.License;
 import Licences.model.Role;
 import Licences.model.User;
 import Licences.repository.RoleRepository;
 import Licences.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,28 +13,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public void registerUser(String name, String login, String password, String email) {
         Role role = roleRepository.findByName("USER")
                 .orElseThrow(() -> new RuntimeException("Роль не найдена"));
-
         User user = new User();
         user.setU01_NAME(name);
         user.setU01_LOGIN(login);
         user.setU01_PASS(passwordEncoder.encode(password));
         user.setU01_EMAIL(email);
         user.setRole(role);
-
         userRepository.save(user);
     }
 

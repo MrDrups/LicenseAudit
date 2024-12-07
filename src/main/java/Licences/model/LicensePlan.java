@@ -22,5 +22,4 @@ public class LicensePlan {
 
     @OneToMany(mappedBy = "licensePlan")
     private Set<License> licenses;
-
 }

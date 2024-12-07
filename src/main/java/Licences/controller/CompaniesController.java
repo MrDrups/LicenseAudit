@@ -2,6 +2,7 @@ package Licences.controller;
 
 import Licences.model.Company;
 import Licences.service.CompanyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,13 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class CompaniesController {
-
     private final CompanyService companyService;
-
-    public CompaniesController(CompanyService companyService) {
-        this.companyService = companyService;
-    }
 
     @RequestMapping("/companies")
     public String viewAllCompanies(@RequestParam(required = false) String keyword, Model model) {
@@ -25,7 +22,6 @@ public class CompaniesController {
         model.addAttribute("company", new Company());
         return "companies";
     }
-
 
     @PostMapping("/companies/save")
     public String saveCompany(@ModelAttribute("company") Company company) {

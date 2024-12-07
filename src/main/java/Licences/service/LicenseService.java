@@ -1,32 +1,22 @@
 package Licences.service;
+
 import Licences.model.Company;
 import Licences.model.License;
 import Licences.model.LicensePlan;
-import Licences.model.User;
 import Licences.repository.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class LicenseService {
     private final LicenseRepository licenseRepository;
-
     private final LicensePlanRepository licensePlanRepository;
-
     private final CompanyRepository companyRepository;
-
     private final LicenseLogService licenseLogService;
-
-    public LicenseService(LicenseRepository licenseRepository, LicensePlanRepository licensePlanRepository,
-                          CompanyRepository companyRepository, LicenseLogService licenseLogService) {
-        this.licenseRepository = licenseRepository;
-        this.licensePlanRepository = licensePlanRepository;
-        this.companyRepository = companyRepository;
-        this.licenseLogService = licenseLogService;
-    }
-
 
     public void saveLicense(License license, Long companyId, Long licensePlanId) {
         License oldLicense = null;
@@ -34,8 +24,6 @@ public class LicenseService {
         if (license.getL01_ID() != null) {
             oldLicense = licenseRepository.findById(license.getL01_ID()).orElse(null);
         }
-        System.out.println(license.getL01_ID());
-
         // Установка связей
         if (companyId != null) {
             Company company = companyRepository.findById(companyId)
@@ -71,18 +59,12 @@ public class LicenseService {
         return licenseRepository.findById(id);
     }
 
-
-
     // Удалить лицензию
-    public void deleteLicense(Long id, User user) {
+    public void deleteLicense(Long id) {
         License license = licenseRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Лицензия с ID " + id + " не найдена"));
 
         licenseLogService.createLog("DELETE", license, null);
         licenseRepository.deleteById(id);
-
-
     }
-
 }
-

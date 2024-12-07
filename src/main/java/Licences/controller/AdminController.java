@@ -6,6 +6,7 @@ import Licences.model.Role;
 import Licences.model.User;
 import Licences.repository.*;
 import Licences.service.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class AdminController {
     private final UserService userService;
-    private final LicenseLogService licenseLogService;
     private final RoleService roleService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -24,22 +25,6 @@ public class AdminController {
     private final LicensePlanRepository licensePlanRepository;
     private final CompanyRepository companyRepository;
     private final LicenseLogRepository licenseLogRepository;
-
-    public AdminController(UserService userService, LicenseLogService licenseLogService,
-                           RoleService roleService, UserRepository userRepository,
-                           RoleRepository roleRepository, LicenseRepository licenseRepository,
-                           LicensePlanRepository licensePlanRepository, CompanyRepository companyRepository,
-                           LicenseLogRepository licenseLogRepository) {
-        this.userService = userService;
-        this.licenseLogService = licenseLogService;
-        this.roleService = roleService;
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.licenseRepository = licenseRepository;
-        this.licensePlanRepository = licensePlanRepository;
-        this.companyRepository = companyRepository;
-        this.licenseLogRepository = licenseLogRepository;
-    }
 
     @RequestMapping("/admin")
     public String viewAdminPanel(@RequestParam(required = false) String keyword, Model model) {
@@ -89,7 +74,6 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-
     @GetMapping("/admin/edit/{id}")
     public String editUser(@PathVariable("id") long id, Model model) {
         Optional<User> user = userService.getUserById(id);
@@ -104,20 +88,10 @@ public class AdminController {
         return "redirect:/admin";
     }
 
-
     public String formatLicense(License license) {
         if (license == null) {
             return "-----";
         }
-        return String.format(
-                "Ключ: %s, Компания: %s, Лиц.План: %s, Начало: %s, Конец: %s, Отозвана: %s, Продлена: %s",
-                license.getL01_KEY(),
-                license.getCompany() != null ? license.getCompany().getC01_NAME() : "-----",
-                license.getLicensePlan() != null ? license.getLicensePlan().getLP01_NAME() : "-----",
-                license.getL01_START_DATE() != null ? license.getL01_START_DATE().toString() : "-----",
-                license.getL01_END_DATE() != null ? license.getL01_END_DATE().toString() : "-----",
-                license.isL01_REVOKED() ? "ДА" : "НЕТ",
-                license.isL01_EXTENDED() ? "ДА" : "НЕТ"
-        );
+        return String.format("Ключ: %s, Компания: %s, Лиц.План: %s, Начало: %s, Конец: %s, Отозвана: %s, Продлена: %s", license.getL01_KEY(), license.getCompany() != null ? license.getCompany().getC01_NAME() : "-----", license.getLicensePlan() != null ? license.getLicensePlan().getLP01_NAME() : "-----", license.getL01_START_DATE() != null ? license.getL01_START_DATE().toString() : "-----", license.getL01_END_DATE() != null ? license.getL01_END_DATE().toString() : "-----", license.isL01_REVOKED() ? "ДА" : "НЕТ", license.isL01_EXTENDED() ? "ДА" : "НЕТ");
     }
 }

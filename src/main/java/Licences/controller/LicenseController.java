@@ -2,26 +2,20 @@ package Licences.controller;
 
 import Licences.model.*;
 import Licences.service.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class LicenseController {
     private final LicenseService licenseService;
     private final CompanyService companyService;
     private final LicensePlanService licensePlanService;
-
-    public LicenseController(LicenseService licenseService, CompanyService companyService,
-                             LicensePlanService licensePlanService) {
-        this.licenseService = licenseService;
-        this.companyService = companyService;
-        this.licensePlanService = licensePlanService;
-    }
-
 
     @RequestMapping("/")
     public String viewLicenses(String keyword, Model model) {
@@ -29,7 +23,7 @@ public class LicenseController {
     }
 
     @GetMapping("/search")
-    public String searchLicense(Model model, String keyword){
+    public String searchLicense(Model model, String keyword) {
         return getString(model, keyword);
     }
 
@@ -37,7 +31,6 @@ public class LicenseController {
         List<License> licenses = licenseService.getAllLicenses(keyword);
         List<Company> companies = companyService.getAllCompanies(keyword);
         List<LicensePlan> licensePlans = licensePlanService.getAllLicenses(keyword);
-
         model.addAttribute("licenses", licenses);
         model.addAttribute("companies", companies);
         model.addAttribute("licensePlans", licensePlans);
@@ -45,9 +38,7 @@ public class LicenseController {
     }
 
     @PostMapping("/save")
-    public String saveLicense(@ModelAttribute License license,
-                              @RequestParam Long companyId,
-                              @RequestParam Long licensePlanId) {
+    public String saveLicense(@ModelAttribute License license, @RequestParam Long companyId, @RequestParam Long licensePlanId) {
         licenseService.saveLicense(license, companyId, licensePlanId);
         return "redirect:/";
     }
@@ -60,8 +51,8 @@ public class LicenseController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteLicense(@PathVariable Long id, @AuthenticationPrincipal User user) {
-        licenseService.deleteLicense(id, user);
+    public String deleteLicense(@PathVariable Long id) {
+        licenseService.deleteLicense(id);
         return "redirect:/";
     }
 }

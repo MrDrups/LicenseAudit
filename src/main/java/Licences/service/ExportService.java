@@ -142,8 +142,6 @@ public class ExportService {
     }
 
 
-
-
     private CellStyle getHeaderCellStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();

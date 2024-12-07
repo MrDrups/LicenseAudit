@@ -5,18 +5,15 @@ import Licences.model.License;
 import Licences.model.LicenseLog;
 import Licences.model.User;
 import Licences.repository.LicenseLogRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.List;
-
 
 @Service
+@RequiredArgsConstructor
 public class LicenseLogService {
-
-    @Autowired
-    private LicenseLogRepository licenseLogRepository;
+    private final LicenseLogRepository licenseLogRepository;
 
     public void createLog(String changeType, License oldLicense, License newLicense) {
         User currentUser = CurrentUserProvider.getCurrentUser();
@@ -36,5 +33,4 @@ public class LicenseLogService {
 
         licenseLogRepository.save(log);
     }
-
 }

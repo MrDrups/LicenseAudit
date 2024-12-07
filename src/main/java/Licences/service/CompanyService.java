@@ -1,10 +1,8 @@
 package Licences.service;
 
 import Licences.model.Company;
-import Licences.model.License;
 import Licences.repository.CompanyRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,8 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CompanyService {
 
-    @Autowired
-    private CompanyRepository companyRepository;
+    private final CompanyRepository companyRepository;
 
     public List<Company> getAllCompanies(String keyword) {
         System.out.println("Вызов getAllLicenses с параметром: " + keyword);
@@ -43,5 +40,4 @@ public class CompanyService {
     public void deleteCompany(Long id) {
         companyRepository.deleteById(id);
     }
-
 }

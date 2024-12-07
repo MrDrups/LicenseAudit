@@ -1,6 +1,5 @@
 package Licences.service;
 
-import Licences.model.Company;
 import Licences.model.LicensePlan;
 import Licences.repository.LicensePlanRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,4 +37,3 @@ public class LicensePlanService {
         licensePlanRepository.deleteById(id);
     }
 }
-

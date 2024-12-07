@@ -2,6 +2,7 @@ package Licences.controller;
 
 import Licences.model.LicensePlan;
 import Licences.service.LicensePlanService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,12 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequiredArgsConstructor
 public class LicensePlanController {
     private final LicensePlanService licensePlanService;
-
-    public LicensePlanController(LicensePlanService licensePlanService) {
-        this.licensePlanService = licensePlanService;
-    }
 
     @RequestMapping("/license_plans")
     public String viewAllLicensePlans(@RequestParam(required = false) String keyword, Model model) {
