@@ -15,7 +15,6 @@ public interface LicenseRepository extends JpaRepository<License, Long> {
     @Query("SELECT c.NAME, COUNT(l) " + "FROM L01_LICENSE l " + "JOIN l.company c " + "GROUP BY c.NAME")
     List<Object[]> countByCompany();
 
-    // Лицензии по лицензионным планам
     @Query("SELECT lp.NAME, COUNT(l) FROM L01_LICENSE l JOIN l.licensePlan lp GROUP BY lp.NAME")
     List<Object[]> countLicensesByLicensePlan();
 }

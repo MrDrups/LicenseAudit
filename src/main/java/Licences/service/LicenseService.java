@@ -48,7 +48,6 @@ public class LicenseService {
     }
 
     public List<License> getAllLicenses(String keyword) {
-        System.out.println("Вызов getAllLicenses с параметром: " + keyword);
         if (keyword == null || keyword.isEmpty()) {
             return licenseRepository.findAll();
         }

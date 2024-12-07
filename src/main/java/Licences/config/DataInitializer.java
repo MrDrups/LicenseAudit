@@ -22,6 +22,12 @@ public class DataInitializer {
                 return roleRepository.save(role);
             });
 
+            roleRepository.findByName("USER").orElseGet(() -> {
+                Role role = new Role();
+                role.setNAME("USER");
+                return roleRepository.save(role);
+            });
+
             Optional<User> rootUser = userRepository.findByLogin("root");
             if (rootUser.isEmpty()) {
                 User user = new User();

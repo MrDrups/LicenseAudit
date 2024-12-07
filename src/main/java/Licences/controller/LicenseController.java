@@ -22,11 +22,6 @@ public class LicenseController {
         return getString(model, keyword);
     }
 
-    @GetMapping("/search")
-    public String searchLicense(Model model, String keyword) {
-        return getString(model, keyword);
-    }
-
     private String getString(Model model, String keyword) {
         List<License> licenses = licenseService.getAllLicenses(keyword);
         List<Company> companies = companyService.getAllCompanies(keyword);
