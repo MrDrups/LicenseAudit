@@ -14,7 +14,6 @@ public class LicensePlanService {
     public final LicensePlanRepository licensePlanRepository;
 
     public List<LicensePlan> getAllLicenses(String keyword) {
-        System.out.println("Вызов getAllLicenses с параметром: " + keyword);
         if (keyword == null || keyword.isEmpty()) {
             return licensePlanRepository.findAll();
         }

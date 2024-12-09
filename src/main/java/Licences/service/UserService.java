@@ -32,7 +32,6 @@ public class UserService {
     }
 
     public List<User> getAllUsers(String keyword) {
-        System.out.println("Вызов getAllLicenses с параметром: " + keyword);
         if (keyword == null || keyword.isEmpty()) {
             return userRepository.findAll();
         }

@@ -49,15 +49,15 @@ public class License {
 
     @Override
     public String toString() {
-        return "License{" +
+        return "{" +
                 "ID=" + ID +
-                ", Key='" + KEY + '\'' +
-                ", Company=" + (company != null ? company.getNAME() : "null") +
-                ", LicensePlan=" + (licensePlan != null ? licensePlan.getNAME() : "null") +
-                ", StartDate=" + START_DATE +
-                ", EndDate=" + END_DATE +
-                ", Revoked=" + REVOKED +
-                ", Extended=" + EXTENDED +
-                '}';
+                ", Ключ='" + KEY + '\'' +
+                ", Компания=" + (company != null ? company.getNAME() : "null") +
+                ", План=" + (licensePlan != null ? licensePlan.getNAME() : "null") +
+                ", Начало=" + START_DATE +
+                ", Конец=" + END_DATE +
+                ", Отозвана=" + REVOKED +
+                ", Продлена=" + EXTENDED +
+                "}";
     }
 }

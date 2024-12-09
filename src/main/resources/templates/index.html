@@ -104,8 +104,18 @@
                 <tbody id="LicenseTableBody">
                 <tr class="text-center align-middle" th:each="license : ${licenses}">
                     <td class="text-start" th:text="${license.KEY}"></td>
-                    <td class="text-start" th:text="${license.company.NAME}"></td>
-                    <td class="text-start" th:text="${license.licensePlan.NAME}"></td>
+                    <td class="text-start">
+                        <span th:if="${license.company != null}" th:text="${license.company.NAME}"></span>
+                        <span th:if="${license.company == null}">
+                            <i class="bi bi-dash"></i>
+                        </span>
+                    </td>
+                    <td class="text-start" th:text="${license.licensePlan.NAME}">
+                        <span th:if="${license.licensePlan != null}" th:text="${license.licensePlan.NAME}"></span>
+                        <span th:if="${license.licensePlan == null}">
+                            <i class="bi bi-dash"></i>
+                        </span>
+                    </td>
                     <td>
                         <samp class="text-secondary" th:text="${license.START_DATE}"></samp>
                     </td>
@@ -134,8 +144,8 @@
                                 data-bs-toggle="modal" data-bs-target="#LicenseModal"
                                 th:data-id="${license.ID}"
                                 th:data-key="${license.KEY}"
-                                th:data-company-id="${license.company.ID}"
-                                th:data-plan-id="${license.licensePlan.ID}"
+                                th:data-company-id="${license.company != null ? license.company.ID : ''}"
+                                th:data-plan-id="${license.licensePlan != null ? license.licensePlan.ID : ''}"
                                 th:data-start-date="${license.START_DATE}"
                                 th:data-end-date="${license.END_DATE}"
                                 th:data-revoked="${license.REVOKED}"

@@ -16,7 +16,6 @@ public class CompanyService {
     private final CompanyRepository companyRepository;
 
     public List<Company> getAllCompanies(String keyword) {
-        System.out.println("Вызов getAllLicenses с параметром: " + keyword);
         if (keyword == null || keyword.isEmpty()) {
             return companyRepository.findAll();
         }

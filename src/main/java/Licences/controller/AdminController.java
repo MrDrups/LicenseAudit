@@ -1,6 +1,5 @@
 package Licences.controller;
 
-import Licences.model.License;
 import Licences.model.LicenseLog;
 import Licences.model.Role;
 import Licences.model.User;
@@ -36,18 +35,6 @@ public class AdminController {
         long totalLicensePlans = licensePlanRepository.count();
         List<Object[]> licensesByCompanies = licenseRepository.countByCompany();
         List<Object[]> licensesByPlans = licenseRepository.countLicensesByLicensePlan();
-        for (LicenseLog log : licenseLogs) {
-            if (log.getOLD_VALUE() != null) {
-                log.setOLD_VALUE(formatLicense(log.getLicense()));
-            } else {
-                log.setOLD_VALUE("-----");
-            }
-            if (log.getNEW_VALUE() != null) {
-                log.setNEW_VALUE(formatLicense(log.getLicense()));
-            } else {
-                log.setNEW_VALUE("-----");
-            }
-        }
         model.addAttribute("roles", roles);
         model.addAttribute("users", users);
         model.addAttribute("licenseLogs", licenseLogs);
@@ -58,6 +45,7 @@ public class AdminController {
         model.addAttribute("licensesByPlans", licensesByPlans);
         return "admin";
     }
+
 
     @PostMapping("/admin/save")
     public String saveUser(@ModelAttribute User user, @RequestParam Long roleId) {
@@ -77,7 +65,6 @@ public class AdminController {
     @GetMapping("/admin/edit/{id}")
     public String editUser(@PathVariable("id") long id, Model model) {
         Optional<User> user = userService.getUserById(id);
-        // Заполняем форму для редактирования
         user.ifPresent(value -> model.addAttribute("user", value));
         return "admin";
     }
@@ -86,12 +73,5 @@ public class AdminController {
     public String deleteAdmin(@PathVariable long id) {
         userService.deleteById(id);
         return "redirect:/admin";
-    }
-
-    public String formatLicense(License license) {
-        if (license == null) {
-            return "-----";
-        }
-        return String.format("Ключ: %s, Компания: %s, Лиц.План: %s, Начало: %s, Конец: %s, Отозвана: %s, Продлена: %s", license.getKEY(), license.getCompany() != null ? license.getCompany().getNAME() : "-----", license.getLicensePlan() != null ? license.getLicensePlan().getNAME() : "-----", license.getSTART_DATE() != null ? license.getSTART_DATE().toString() : "-----", license.getEND_DATE() != null ? license.getEND_DATE().toString() : "-----", license.isREVOKED() ? "ДА" : "НЕТ", license.isEXTENDED() ? "ДА" : "НЕТ");
     }
 }
