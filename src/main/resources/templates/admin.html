@@ -133,7 +133,7 @@
                         <td class="text-center" th:text="${log.user.LOGIN}"></td>
                         <td>
                             <i th:if="${log.license == null}" class="bi bi-dash"></i>
-                            <span th:unless="${log.license == null}" th:text="${log.license}"></span>
+                            <span th:unless="${log.license == null}" th:text="${log.license.ID}"></span>
                         </td>
                     </tr>
                     </tbody>
