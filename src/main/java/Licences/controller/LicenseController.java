@@ -29,6 +29,7 @@ public class LicenseController {
         model.addAttribute("licenses", licenses);
         model.addAttribute("companies", companies);
         model.addAttribute("licensePlans", licensePlans);
+        model.addAttribute("keyword", keyword);
         return "index";
     }
 

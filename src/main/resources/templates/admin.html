@@ -23,7 +23,11 @@
                 Администрирование
             </a>
         </div>
-        <form class="d-flex">
+        <form class="d-flex" th:action="@{/admin}">
+            <input class="form-control me-2" type="search" name="keyword" id="keyword"
+                   placeholder="Поиск..."
+                   aria-label="Search" th:value="${keyword}">
+            <button class="btn btn-outline-success me-2" type="submit">Поиск</button>
             <button class="btn btn-outline-danger" type="submit">
                 <a th:href="@{/login}" style="text-decoration: none; color: red">Выйти</a>
             </button>

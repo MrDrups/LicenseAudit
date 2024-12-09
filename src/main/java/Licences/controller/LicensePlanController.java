@@ -20,6 +20,7 @@ public class LicensePlanController {
         List<LicensePlan> licensePlans = licensePlanService.getAllLicenses(keyword);
         model.addAttribute("licensePlans", licensePlans);
         model.addAttribute("licensePlan", new LicensePlan());
+        model.addAttribute("keyword", keyword);
         return "licensePlans";
     }
 

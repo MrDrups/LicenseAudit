@@ -27,7 +27,7 @@ public class AdminController {
 
     @RequestMapping("/admin")
     public String viewAdminPanel(@RequestParam(required = false) String keyword, Model model) {
-        List<LicenseLog> licenseLogs = licenseLogRepository.findAll();
+        List<LicenseLog> licenseLogs = licenseLogRepository.search(keyword);
         List<User> users = userService.getAllUsers(keyword);
         List<Role> roles = roleService.getAllRoles(keyword);
         long totalLicenses = licenseRepository.count();
@@ -43,6 +43,7 @@ public class AdminController {
         model.addAttribute("totalLicensePlans", totalLicensePlans);
         model.addAttribute("licensesByCompanies", licensesByCompanies);
         model.addAttribute("licensesByPlans", licensesByPlans);
+        model.addAttribute("keyword", keyword);
         return "admin";
     }
 

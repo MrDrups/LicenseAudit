@@ -20,6 +20,7 @@ public class CompaniesController {
         List<Company> companies = companyService.getAllCompanies(keyword);
         model.addAttribute("companies", companies);
         model.addAttribute("company", new Company());
+        model.addAttribute("keyword", keyword);
         return "companies";
     }
 

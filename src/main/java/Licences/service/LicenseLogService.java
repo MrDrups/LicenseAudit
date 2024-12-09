@@ -23,15 +23,12 @@ public class LicenseLogService {
         log.setCHANGE_DATE(new Timestamp(System.currentTimeMillis()));
         log.setUser(currentUser);
         log.setLicense(newLicense != null ? newLicense : oldLicense);
-
         if (oldLicense != null) {
             log.setOLD_VALUE(oldLicense.toString());
         }
-
         if (newLicense != null) {
             log.setNEW_VALUE(newLicense.toString());
         }
-
         licenseLogRepository.save(log);
     }
 }
