@@ -1,14 +1,17 @@
 package Licences.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.sql.Timestamp;
+import java.util.Objects;
 
 @Entity(name = "LL01_LICENSE_LOG")
-@Data
+@Getter
+@Setter
 public class LicenseLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,4 +39,21 @@ public class LicenseLog {
     @JoinColumn(name = "L01_ID", referencedColumnName = "L01_ID")
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private License license;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LicenseLog other)) return false;
+        return ID != null && ID.equals(other.ID);
+    }
+
+    @Override
+    public int hashCode() {
+        return ID != null ? Objects.hash(ID) : System.identityHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return "LicenseLog{ID=" + ID + ", type='" + CHANGE_TYPE + "'}";
+    }
 }

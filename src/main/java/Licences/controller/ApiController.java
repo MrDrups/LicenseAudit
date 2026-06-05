@@ -12,10 +12,12 @@ import Licences.model.LicensePlan;
 import Licences.repository.CompanyRepository;
 import Licences.repository.LicensePlanRepository;
 import Licences.repository.LicenseRepository;
+import Licences.service.LicenseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -25,6 +27,7 @@ public class ApiController {
     private final LicenseRepository licenseRepository;
     private final CompanyRepository companyRepository;
     private final LicensePlanRepository licensePlanRepository;
+    private final LicenseService licenseService;
 
     @GetMapping("/licenses")
     public ResponseEntity<List<LicenseDTO>> getAllLicenses() {
@@ -73,6 +76,32 @@ public class ApiController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/licenses/{id}/revoke")
+    public ResponseEntity<LicenseDTO> revokeLicense(@PathVariable Long id) {
+        try {
+            licenseService.revokeLicense(id);
+            return licenseRepository.findById(id)
+                    .map(LicenseMapper::toDTO)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/licenses/{id}/extend")
+    public ResponseEntity<LicenseDTO> extendLicense(@PathVariable Long id, @RequestParam LocalDate newEndDate) {
+        try {
+            licenseService.extendLicense(id, newEndDate);
+            return licenseRepository.findById(id)
+                    .map(LicenseMapper::toDTO)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // === Методы для Company ===

@@ -1,15 +1,18 @@
 package Licences.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.Objects;
 import java.util.Set;
 
 
 @Entity(name = "U01_USER")
-@Data
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +38,21 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<LicenseLog> licenseLogs;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User other)) return false;
+        return ID != 0 && ID == other.ID;
+    }
+
+    @Override
+    public int hashCode() {
+        return ID != 0 ? Objects.hash(ID) : System.identityHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return "User{ID=" + ID + ", LOGIN='" + LOGIN + "'}";
+    }
 }

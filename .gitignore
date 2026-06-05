@@ -38,3 +38,22 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Logs ###
+*.log
+
+### Tests ###
+tests/
+test-results/
+
+### Node.js / Playwright ###
+node_modules/
+package.json
+package-lock.json
+playwright.config.ts
+
+### AI / Task tools ###
+.tasks/
+.veai/
+NEED_FIX.md
+Задание.md

@@ -7,6 +7,7 @@ import Licences.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +44,7 @@ public class LicenseService {
         if (oldLicense != null) {
             licenseLogService.createLog("UPDATE", oldLicense, savedLicense);
         } else {
-            licenseLogService.createLog("CREATE", null, savedLicense);
+            licenseLogService.createLog("CREATE", (License) null, savedLicense);
         }
     }
 
@@ -65,5 +66,28 @@ public class LicenseService {
 
         licenseLogService.createLog("DELETE", license, null);
         licenseRepository.deleteById(id);
+    }
+
+    // Отозвать лицензию — мягкое удаление через флаг REVOKED
+    public void revokeLicense(Long id) {
+        License license = licenseRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Лицензия с ID " + id + " не найдена"));
+
+        String oldValue = license.toString(); // сохраняем состояние ДО мутации
+        license.setREVOKED(true);
+        License savedLicense = licenseRepository.save(license);
+        licenseLogService.createLog("UPDATE", oldValue, savedLicense);
+    }
+
+    // Продлить лицензию — обновление END_DATE и установка EXTENDED=true
+    public void extendLicense(Long id, LocalDate newEndDate) {
+        License license = licenseRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Лицензия с ID " + id + " не найдена"));
+
+        String oldValue = license.toString(); // сохраняем состояние ДО мутации
+        license.setEND_DATE(newEndDate);
+        license.setEXTENDED(true);
+        License savedLicense = licenseRepository.save(license);
+        licenseLogService.createLog("UPDATE", oldValue, savedLicense);
     }
 }

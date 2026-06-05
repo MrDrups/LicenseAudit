@@ -32,6 +32,10 @@ public class ExportController {
     private final LicensePlanRepository licensePlanRepository;
     private final LicenseLogRepository licenseLogRepository;
 
+    private static final MediaType CSV_MEDIA_TYPE = new MediaType("text", "csv", java.nio.charset.StandardCharsets.UTF_8);
+
+    // ========== Excel Export ==========
+
     @GetMapping("/licenses")
     public ResponseEntity<InputStreamResource> exportLicenses() throws IOException {
         List<License> licenses = licenseRepository.findAll();
@@ -70,5 +74,43 @@ public class ExportController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=license_logs.xlsx");
         return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_OCTET_STREAM).body(new InputStreamResource(in));
+    }
+
+    // ========== CSV Export ==========
+
+    @GetMapping("/licenses/csv")
+    public ResponseEntity<byte[]> exportLicensesCsv() {
+        List<License> licenses = licenseRepository.findAll();
+        byte[] csvData = exportService.exportLicensesToCsv(licenses);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=licenses.csv");
+        return ResponseEntity.ok().headers(headers).contentType(CSV_MEDIA_TYPE).body(csvData);
+    }
+
+    @GetMapping("/companies/csv")
+    public ResponseEntity<byte[]> exportCompaniesCsv() {
+        List<Company> companies = companyRepository.findAll();
+        byte[] csvData = exportService.exportCompaniesToCsv(companies);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=companies.csv");
+        return ResponseEntity.ok().headers(headers).contentType(CSV_MEDIA_TYPE).body(csvData);
+    }
+
+    @GetMapping("/license-plans/csv")
+    public ResponseEntity<byte[]> exportLicensePlansCsv() {
+        List<LicensePlan> licensePlans = licensePlanRepository.findAll();
+        byte[] csvData = exportService.exportLicensePlansToCsv(licensePlans);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=license_plans.csv");
+        return ResponseEntity.ok().headers(headers).contentType(CSV_MEDIA_TYPE).body(csvData);
+    }
+
+    @GetMapping("/license-logs/csv")
+    public ResponseEntity<byte[]> exportLicenseLogsCsv() {
+        List<LicenseLog> licenseLogs = licenseLogRepository.findAll();
+        byte[] csvData = exportService.exportLicenseLogsToCsv(licenseLogs);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=license_logs.csv");
+        return ResponseEntity.ok().headers(headers).contentType(CSV_MEDIA_TYPE).body(csvData);
     }
 }

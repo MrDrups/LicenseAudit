@@ -1,6 +1,7 @@
 package Licences.controller;
 
 import Licences.model.LicenseLog;
+import Licences.model.Permission;
 import Licences.model.Role;
 import Licences.model.User;
 import Licences.repository.*;
@@ -12,16 +13,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 public class AdminController {
     private final UserService userService;
     private final RoleService roleService;
+    private final PermissionService permissionService;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final LicenseRepository licenseRepository;
-    private final LicensePlanRepository licensePlanRepository;
     private final CompanyRepository companyRepository;
     private final LicenseLogRepository licenseLogRepository;
 
@@ -30,9 +33,13 @@ public class AdminController {
         List<LicenseLog> licenseLogs = licenseLogRepository.search(keyword);
         List<User> users = userService.getAllUsers(keyword);
         List<Role> roles = roleService.getAllRoles(keyword);
+        List<Permission> allPermissions = permissionService.getAllPermissions();
         long totalLicenses = licenseRepository.count();
         long totalCompanies = companyRepository.count();
-        long totalLicensePlans = licensePlanRepository.count();
+        long activeLicenses = licenseRepository.countActive();
+        long expiredLicenses = licenseRepository.countExpired();
+        long revokedLicenses = licenseRepository.countRevoked();
+        long totalUsers = userRepository.count();
         List<Object[]> licensesByCompanies = licenseRepository.countByCompany();
         List<Object[]> licensesByPlans = licenseRepository.countLicensesByLicensePlan();
         model.addAttribute("roles", roles);
@@ -40,10 +47,14 @@ public class AdminController {
         model.addAttribute("licenseLogs", licenseLogs);
         model.addAttribute("totalLicenses", totalLicenses);
         model.addAttribute("totalCompanies", totalCompanies);
-        model.addAttribute("totalLicensePlans", totalLicensePlans);
+        model.addAttribute("activeLicenses", activeLicenses);
+        model.addAttribute("expiredLicenses", expiredLicenses);
+        model.addAttribute("revokedLicenses", revokedLicenses);
+        model.addAttribute("totalUsers", totalUsers);
         model.addAttribute("licensesByCompanies", licensesByCompanies);
         model.addAttribute("licensesByPlans", licensesByPlans);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("allPermissions", allPermissions);
         return "admin";
     }
 
@@ -60,6 +71,13 @@ public class AdminController {
             updatedUser.setRole(existingRole.get());
             userRepository.save(updatedUser);
         }
+        return "redirect:/admin";
+    }
+
+    @PostMapping("/admin/roles/permissions")
+    public String updateRolePermissions(@RequestParam Long roleId, @RequestParam(required = false) Set<Long> permissionIds) {
+        Set<Long> safePermissionIds = permissionIds != null ? permissionIds : Set.of();
+        roleService.updateRolePermissions(roleId, safePermissionIds);
         return "redirect:/admin";
     }
 

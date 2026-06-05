@@ -1,16 +1,19 @@
 package Licences.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity(name = "L01_LICENSE")
-@Data
+@Getter
+@Setter
 public class License {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +37,12 @@ public class License {
     @Column(name = "L01_EXTENDED")
     private boolean EXTENDED;
 
+    @Column(name = "L01_NOTIFICATION_PERIOD", columnDefinition = "TEXT")
+    private String NOTIFICATION_PERIOD;
+
+    @Column(name = "L01_COMMENT", columnDefinition = "TEXT")
+    private String COMMENT;
+
     @OneToMany(mappedBy = "license")
     private Set<LicenseLog> licenseLogs;
 
@@ -46,6 +55,18 @@ public class License {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     @JoinColumn(name = "LP01_ID", referencedColumnName = "LP01_ID")
     private LicensePlan licensePlan;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof License other)) return false;
+        return ID != null && ID.equals(other.ID);
+    }
+
+    @Override
+    public int hashCode() {
+        return ID != null ? Objects.hash(ID) : System.identityHashCode(this);
+    }
 
     @Override
     public String toString() {

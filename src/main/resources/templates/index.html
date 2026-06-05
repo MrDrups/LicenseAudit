@@ -4,37 +4,7 @@
 
 <body style="background-color: #dee2e6">
 
-<nav class="navbar navbar-light navbar-expand-lg shadow-lg rounded-bottom" style="background-color: #f8f9fa;">
-    <div class="container-fluid">
-        <div class="navbar-nav">
-            <a th:href="@{/}" class="nav-link active" aria-current="page">
-                <i class="bi bi-file-text"></i>
-                Лицензии
-            </a>
-            <a th:href="@{/companies}" class="nav-link">
-                <i class="bi bi-building"></i>
-                Компании
-            </a>
-            <a th:href="@{/license_plans}" class="nav-link">
-                <i class="bi bi-stickies"></i>
-                Лицензионные планы
-            </a>
-            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">
-                <i class="bi bi-gear"></i>
-                Администрирование
-            </a>
-        </div>
-        <form class="d-flex" th:action="@{/}">
-            <input class="form-control me-2" type="search" name="keyword" id="keyword"
-                   placeholder="Поиск..."
-                   aria-label="Search" th:value="${keyword}">
-            <button class="btn btn-outline-success me-2" type="submit">Поиск</button>
-            <button class="btn btn-outline-danger" type="submit">
-                <a th:href="@{/login}" style="text-decoration: none; color: red">Выйти</a>
-            </button>
-        </form>
-    </div>
-</nav>
+<div th:replace="~{fragments/header :: navbar('licenses', '/')}"></div>
 
 
 <!--TABLE-->
@@ -51,10 +21,16 @@
             <span id="rowCounter" class="badge bg-secondary "></span>
         </div>
         <!-- Кнопка "Добавить" справа -->
-        <div sec:authorize="hasRole('ADMIN')" class="col-auto ms-auto">
+        <div sec:authorize="hasRole('LEAD')" class="col-auto ms-auto">
             <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#LicenseModal">
                 <i class="bi bi-file-plus"></i>
                 Добавить
+            </div>
+        </div>
+        <div sec:authorize="hasRole('USER')" class="col-auto ms-auto">
+            <div class="btn btn-info" data-bs-toggle="modal" data-bs-target="#RequestModal">
+                <i class="bi bi-plus-circle"></i>
+                Создать заявку
             </div>
         </div>
     </div>
@@ -95,7 +71,7 @@
                         <i class="bi bi-arrow-repeat"></i>
                         Продлена
                     </th>
-                    <th sec:authorize="hasRole('ADMIN')" style="text-align: center;">
+                    <th sec:authorize="hasRole('LEAD')" style="text-align: center;">
                         <i class="bi bi-code-square"></i>
                         Действия
                     </th>
@@ -139,7 +115,7 @@
                         <i class="bi bi-dash"></i>
                     </span>
                     </td>
-                    <td sec:authorize="hasRole('ADMIN')" style="text-align: center;">
+                    <td sec:authorize="hasRole('LEAD')" style="text-align: center;">
                         <button class="btn btn-outline-primary"
                                 data-bs-toggle="modal" data-bs-target="#LicenseModal"
                                 th:data-id="${license.ID}"
@@ -149,12 +125,22 @@
                                 th:data-start-date="${license.START_DATE}"
                                 th:data-end-date="${license.END_DATE}"
                                 th:data-revoked="${license.REVOKED}"
-                                th:data-extended="${license.EXTENDED}">
+                                th:data-extended="${license.EXTENDED}"
+                                th:data-comment="${license.COMMENT}"
+                                th:data-notification-period="${license.NOTIFICATION_PERIOD}">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <a class="btn btn-outline-danger" th:href="@{/delete/{id}(id=${license.ID})}">
-                            <i class="bi bi-trash"></i>
-                        </a>
+                        <form th:if="${!license.REVOKED}" th:action="@{/licenses/revoke/{id}(id=${license.ID})}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-warning" title="Отозвать" onclick="return confirm('Отозвать лицензию?')">
+                                <i class="bi bi-slash-circle"></i>
+                            </button>
+                        </form>
+                        <button th:if="${!license.REVOKED}" class="btn btn-outline-success" title="Продлить"
+                                data-bs-toggle="modal" data-bs-target="#ExtendModal"
+                                th:data-license-id="${license.ID}"
+                                th:data-end-date="${license.END_DATE}">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </button>
                     </td>
                 </tr>
                 </tbody>
@@ -176,62 +162,144 @@
 
 
 <div class="modal fade" id="LicenseModal" tabindex="-1" aria-labelledby="LicenseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form th:action="@{/save}" method="post">
+            <form th:action="@{/save}" method="post" id="wizardForm">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="LicenseModalLabel">Добавить/Редактировать лицензию</h5>
+                    <h5 class="modal-title" id="LicenseModalLabel">Добавить лицензию</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <i class="bi bi-key"></i>
-                        <label for="licenseKey" class="form-label">Ключ</label>
-                        <input type="text" class="form-control" id="licenseKey" name="KEY" required>
+                    <!-- Wizard Steps Indicator -->
+                    <div class="wizard-steps mb-4">
+                        <div class="wizard-step active" data-step="1">
+                            <span class="step-number">1</span>
+                            <span class="step-label">Общая информация</span>
+                        </div>
+                        <div class="wizard-step" data-step="2">
+                            <span class="step-number">2</span>
+                            <span class="step-label">Данные организации</span>
+                        </div>
+                        <div class="wizard-step" data-step="3">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Временные ограничения</span>
+                        </div>
+                        <div class="wizard-step" data-step="4">
+                            <span class="step-number">4</span>
+                            <span class="step-label">Комментарии</span>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <i class="bi bi-building"></i>
-                        <label for="companyId" class="form-label">Компания</label>
-                        <select class="form-select" id="companyId" name="companyId" required>
-                            <option value="" disabled selected>Выберите компанию</option>
-                            <option th:each="company : ${companies}" th:value="${company.ID}"
-                                    th:text="${company.NAME}"></option>
-                        </select>
+
+                    <!-- Step 1: Общая информация -->
+                    <div class="wizard-pane active" id="step1">
+                        <h6 class="mb-3"><i class="bi bi-info-circle"></i> Общая информация</h6>
+                        <div class="mb-3">
+                            <i class="bi bi-key"></i>
+                            <label for="licenseKey" class="form-label">Ключ лицензии <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="licenseKey" name="KEY" required>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-building"></i>
+                            <label for="companyId" class="form-label">Компания <span class="text-danger">*</span></label>
+                            <select class="form-select" id="companyId" name="companyId" required>
+                                <option value="" disabled selected>Выберите компанию</option>
+                                <option th:each="company : ${companies}" th:value="${company.ID}"
+                                        th:data-name="${company.NAME}"
+                                        th:data-address="${company.ADDRESS}"
+                                        th:data-contact="${company.CONTACT}"
+                                        th:data-desc="${company.DESC}"
+                                        th:text="${company.NAME}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-stickies"></i>
+                            <label for="licensePlanId" class="form-label">Лицензионный план <span class="text-danger">*</span></label>
+                            <select class="form-select" id="licensePlanId" name="licensePlanId" required>
+                                <option value="" disabled selected>Выберите план</option>
+                                <option th:each="plan : ${licensePlans}" th:value="${plan.ID}"
+                                        th:text="${plan.NAME}"></option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <i class="bi bi-stickies"></i>
-                        <label for="licensePlanId" class="form-label">Лицензионный план</label>
-                        <select class="form-select" id="licensePlanId" name="licensePlanId" required>
-                            <option value="" disabled selected>Выберите план</option>
-                            <option th:each="plan : ${licensePlans}" th:value="${plan.ID}"
-                                    th:text="${plan.NAME}"></option>
-                        </select>
+
+                    <!-- Step 2: Данные организации -->
+                    <div class="wizard-pane" id="step2">
+                        <h6 class="mb-3"><i class="bi bi-building"></i> Данные организации</h6>
+                        <div class="mb-3">
+                            <i class="bi bi-building"></i>
+                            <label for="orgName" class="form-label">Наименование организации</label>
+                            <input type="text" class="form-control" id="orgName" name="orgName" readonly placeholder="Автозаполнение из шага 1">
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-geo-alt"></i>
+                            <label for="orgAddress" class="form-label">Адрес</label>
+                            <input type="text" class="form-control" id="orgAddress" name="orgAddress" readonly placeholder="Автозаполнение из шага 1">
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-person-lines-fill"></i>
+                            <label for="orgContact" class="form-label">Контакт</label>
+                            <input type="text" class="form-control" id="orgContact" name="orgContact" readonly placeholder="Автозаполнение из шага 1">
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-card-text"></i>
+                            <label for="orgDesc" class="form-label">Описание</label>
+                            <textarea class="form-control" id="orgDesc" name="orgDesc" rows="3" readonly placeholder="Автозаполнение из шага 1"></textarea>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <i class="bi bi-calendar2-plus"></i>
-                        <label for="startDate" class="form-label">Дата начала</label>
-                        <input type="date" class="form-control" id="startDate" name="START_DATE" required>
+
+                    <!-- Step 3: Временные ограничения -->
+                    <div class="wizard-pane" id="step3">
+                        <h6 class="mb-3"><i class="bi bi-calendar-range"></i> Временные ограничения</h6>
+                        <div class="mb-3">
+                            <i class="bi bi-calendar2-plus"></i>
+                            <label for="startDate" class="form-label">Дата начала <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="startDate" name="START_DATE" required>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-calendar2-minus"></i>
+                            <label for="endDate" class="form-label">Дата окончания <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="endDate" name="END_DATE" required>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-bell"></i>
+                            <label for="notificationPeriod" class="form-label">Период отправки уведомлений</label>
+                            <select class="form-select" id="notificationPeriod" name="NOTIFICATION_PERIOD">
+                                <option value="Нет" selected>Нет</option>
+                                <option value="Да">Да</option>
+                                <option value="1 день">1 день</option>
+                                <option value="3 дня">3 дня</option>
+                                <option value="5 дней">5 дней</option>
+                                <option value="1 месяц">1 месяц</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <i class="bi bi-calendar2-minus"></i>
-                        <label for="endDate" class="form-label">Дата окончания</label>
-                        <input type="date" class="form-control" id="endDate" name="END_DATE" required>
+
+                    <!-- Step 4: Комментарии -->
+                    <div class="wizard-pane" id="step4">
+                        <h6 class="mb-3"><i class="bi bi-chat-left-text"></i> Комментарии</h6>
+                        <div class="mb-3">
+                            <label for="licenseComment" class="form-label">Комментарий</label>
+                            <textarea class="form-control" id="licenseComment" name="COMMENT" rows="5" placeholder="Произвольный текст комментария"></textarea>
+                        </div>
                     </div>
-                    <div class="mb-3 form-check">
-                        <i class="bi bi-slash-circle"></i>
-                        <input type="checkbox" class="form-check-input" id="revoked" name="REVOKED">
-                        <label for="revoked" class="form-check-label">Отозвана</label>
-                    </div>
-                    <div class="mb-3 form-check">
-                        <i class="bi bi-arrow-repeat"></i>
-                        <input type="checkbox" class="form-check-input" id="extended" name="EXTENDED">
-                        <label for="extended" class="form-check-label">Продлена</label>
-                    </div>
+
                     <input type="hidden" name="ID" id="licenseId">
+                    <input type="hidden" name="REVOKED" id="revokedField" value="false">
+                    <input type="hidden" name="EXTENDED" id="extendedField" value="false">
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Отмена</button>
-                    <button type="submit" class="btn btn-outline-primary">Сохранить</button>
+                    <div>
+                        <button type="button" class="btn btn-outline-secondary" id="wizardPrev" style="display:none;">
+                            <i class="bi bi-arrow-left"></i> Назад
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" id="wizardNext">
+                            Далее <i class="bi bi-arrow-right"></i>
+                        </button>
+                        <button type="submit" class="btn btn-outline-success" id="wizardSubmit" style="display:none;">
+                            <i class="bi bi-check-lg"></i> Сохранить
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -239,17 +307,131 @@
 </div>
 
 <script>
+    // ========== Wizard Logic ==========
+    const _wizardPrev = document.getElementById('wizardPrev');
+    const _wizardNext = document.getElementById('wizardNext');
+    const _wizardSubmit = document.getElementById('wizardSubmit');
+    const _licenseModal = document.getElementById('LicenseModal');
+    const _requestModal = document.getElementById('RequestModal');
+
+    if (_wizardNext && _wizardPrev && _wizardSubmit && _licenseModal) {
+    const TOTAL_STEPS = 4;
+    let currentStep = 1;
+
+    const wizardSteps = document.querySelectorAll('.wizard-step');
+    const wizardPanes = document.querySelectorAll('.wizard-pane');
+    const prevBtn = _wizardPrev;
+    const nextBtn = _wizardNext;
+    const submitBtn = _wizardSubmit;
+
+    function showStep(step) {
+        wizardPanes.forEach(p => p.classList.remove('active'));
+        wizardSteps.forEach(s => s.classList.remove('active', 'completed'));
+
+        const pane = document.getElementById('step' + step);
+        if (pane) pane.classList.add('active');
+
+        wizardSteps.forEach((s, i) => {
+            if (i + 1 < step) s.classList.add('completed');
+            if (i + 1 === step) s.classList.add('active');
+        });
+
+        prevBtn.style.display = step > 1 ? '' : 'none';
+        nextBtn.style.display = step < TOTAL_STEPS ? '' : 'none';
+        submitBtn.style.display = step === TOTAL_STEPS ? '' : 'none';
+    }
+
+    function validateStep(step) {
+        const pane = document.getElementById('step' + step);
+        const requiredFields = pane.querySelectorAll('[required]');
+        let valid = true;
+        requiredFields.forEach(field => {
+            if (!field.value || field.value.trim() === '') {
+                field.classList.add('is-invalid');
+                valid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        return valid;
+    }
+
+    nextBtn.addEventListener('click', function () {
+        if (!validateStep(currentStep)) return;
+        // Autofill org data from step 1 to step 2
+        if (currentStep === 1) {
+            const companySelect = document.getElementById('companyId');
+            const selectedOption = companySelect.options[companySelect.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                document.getElementById('orgName').value = selectedOption.getAttribute('data-name') || selectedOption.text;
+                document.getElementById('orgAddress').value = selectedOption.getAttribute('data-address') || '';
+                document.getElementById('orgContact').value = selectedOption.getAttribute('data-contact') || '';
+                document.getElementById('orgDesc').value = selectedOption.getAttribute('data-desc') || '';
+            } else {
+                document.getElementById('orgName').value = '';
+                document.getElementById('orgAddress').value = '';
+                document.getElementById('orgContact').value = '';
+                document.getElementById('orgDesc').value = '';
+            }
+        }
+        if (currentStep < TOTAL_STEPS) {
+            currentStep++;
+            showStep(currentStep);
+        }
+    });
+
+    prevBtn.addEventListener('click', function () {
+        if (currentStep > 1) {
+            currentStep--;
+            showStep(currentStep);
+        }
+    });
+
+    // Reset wizard when modal is opened for "Добавить"
+    const addLicenseBtn = document.querySelector('[data-bs-target="#LicenseModal"]');
+    if (addLicenseBtn) addLicenseBtn.addEventListener('click', function (e) {
+        // Only reset if it's the "Добавить" button (not edit)
+        if (!e.currentTarget.hasAttribute('data-id')) {
+            resetWizard();
+        }
+    });
+
+    function resetWizard() {
+        currentStep = 1;
+        showStep(1);
+        document.getElementById('wizardForm').reset();
+        document.getElementById('licenseId').value = '';
+        document.getElementById('revokedField').value = 'false';
+        document.getElementById('extendedField').value = 'false';
+        // Clear org data fields
+        document.getElementById('orgName').value = '';
+        document.getElementById('orgAddress').value = '';
+        document.getElementById('orgContact').value = '';
+        document.getElementById('orgDesc').value = '';
+        // Clear validation states
+        document.querySelectorAll('#wizardForm .is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    }
+
+    // Reset wizard on modal show (for "Добавить" button)
+    document.getElementById('LicenseModal').addEventListener('show.bs.modal', function (e) {
+        const trigger = e.relatedTarget;
+        if (!trigger || !trigger.getAttribute('data-id')) {
+            resetWizard();
+        }
+    });
+
+    // Edit button: fill wizard with existing data
     let editButtons = document.querySelectorAll('button[data-bs-toggle="modal"][data-bs-target="#LicenseModal"]');
     editButtons.forEach(function (button) {
         button.addEventListener('click', function () {
             let id = button.getAttribute('data-id');
+            if (!id) return; // Skip "Добавить" button
+
             let key = button.getAttribute('data-key');
             let companyId = button.getAttribute('data-company-id');
             let planId = button.getAttribute('data-plan-id');
             let startDate = button.getAttribute('data-start-date');
             let endDate = button.getAttribute('data-end-date');
-            let revoked = button.getAttribute('data-revoked') === 'true';
-            let extended = button.getAttribute('data-extended') === 'true';
 
             document.getElementById('licenseId').value = id;
             document.getElementById('licenseKey').value = key;
@@ -257,23 +439,47 @@
             document.getElementById('licensePlanId').value = planId;
             document.getElementById('startDate').value = startDate;
             document.getElementById('endDate').value = endDate;
-            document.getElementById('revoked').checked = revoked;
-            document.getElementById('extended').checked = extended;
+
+            // Fill COMMENT and NOTIFICATION_PERIOD from data attributes
+            let comment = button.getAttribute('data-comment');
+            let notificationPeriod = button.getAttribute('data-notification-period');
+            document.getElementById('licenseComment').value = comment || '';
+            document.getElementById('notificationPeriod').value = notificationPeriod || 'Нет';
+
+            // Preserve REVOKED and EXTENDED flags from data attributes
+            let revoked = button.getAttribute('data-revoked');
+            let extended = button.getAttribute('data-extended');
+            document.getElementById('revokedField').value = revoked || 'false';
+            document.getElementById('extendedField').value = extended || 'false';
+
+            // Autofill org data from selected company
+            const companySelect = document.getElementById('companyId');
+            const selectedOption = companySelect.options[companySelect.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                document.getElementById('orgName').value = selectedOption.getAttribute('data-name') || selectedOption.text;
+                document.getElementById('orgAddress').value = selectedOption.getAttribute('data-address') || '';
+                document.getElementById('orgContact').value = selectedOption.getAttribute('data-contact') || '';
+                document.getElementById('orgDesc').value = selectedOption.getAttribute('data-desc') || '';
+            }
+
+            currentStep = 1;
+            showStep(1);
         });
     });
 
-
+    // ========== Days Remaining Calculation ==========
+    } // end of wizard guard
     document.addEventListener('DOMContentLoaded', function () {
         const rows = document.querySelectorAll('#LicenseTable tbody tr');
 
         rows.forEach(row => {
-            const endDateText = row.querySelector('td:nth-child(5)').textContent.trim();   // 5-й столбец: дата окончания
+            const endDateText = row.querySelector('td:nth-child(5)').textContent.trim();
             const daysRemainingCell = row.querySelector('.days-remaining');
 
             if (endDateText) {
                 const endDate = new Date(endDateText);
                 const currentDate = new Date();
-                const diffTime = endDate - currentDate; // Сравниваем с текущей датой
+                const diffTime = endDate - currentDate;
 
                 if (diffTime > 0) {
                     daysRemainingCell.textContent = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -286,8 +492,9 @@
         });
     });
 
+    // ========== Pagination ==========
     document.addEventListener("DOMContentLoaded", () => {
-        const rowsPerPage = 8; // Количество строк на страницу
+        const rowsPerPage = 8;
         const tableBody = document.getElementById("LicenseTableBody");
         const pagination = document.getElementById("pagination");
         const rows = Array.from(tableBody.querySelectorAll("tr"));
@@ -310,7 +517,7 @@
             for (let i = 1; i <= totalPages; i++) {
                 const li = document.createElement("li");
                 li.classList.add("page-item");
-                if (i === 1) li.classList.add("active"); // Первая кнопка активна по умолчанию
+                if (i === 1) li.classList.add("active");
 
                 const button = document.createElement("button");
                 button.classList.add("page-link");
@@ -325,6 +532,281 @@
         createPaginationButtons();
         displayPage(1);
     });
+</script>
+
+<!-- Модальное окно продления лицензии -->
+<div class="modal fade" id="ExtendModal" tabindex="-1" aria-labelledby="ExtendModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="extendForm" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ExtendModalLabel">Продлить лицензию</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <i class="bi bi-calendar2-minus"></i>
+                        <label for="currentEndDate" class="form-label">Текущая дата окончания</label>
+                        <input type="date" class="form-control" id="currentEndDate" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <i class="bi bi-calendar2-plus"></i>
+                        <label for="newEndDate" class="form-label">Новая дата окончания</label>
+                        <input type="date" class="form-control" id="newEndDate" name="newEndDate" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-outline-success">Продлить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Заполнение модального окна продления
+    let extendButtons = document.querySelectorAll('button[data-bs-toggle="modal"][data-bs-target="#ExtendModal"]');
+    extendButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            let licenseId = button.getAttribute('data-license-id');
+            let endDate = button.getAttribute('data-end-date');
+
+            document.getElementById('currentEndDate').value = endDate;
+            document.getElementById('newEndDate').value = '';
+            document.getElementById('extendForm').action = '/licenses/extend/' + licenseId;
+        });
+});
+</script>
+
+<!-- Модальное окно создания заявки (USER) -->
+<div class="modal fade" id="RequestModal" tabindex="-1" aria-labelledby="RequestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form th:action="@{/requests/create}" method="post" id="requestWizardForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="RequestModalLabel">Создать заявку на лицензию</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Wizard Steps Indicator -->
+                    <div class="wizard-steps mb-4" id="requestWizardSteps">
+                        <div class="wizard-step active" data-step="1">
+                            <span class="step-number">1</span>
+                            <span class="step-label">Общая информация</span>
+                        </div>
+                        <div class="wizard-step" data-step="2">
+                            <span class="step-number">2</span>
+                            <span class="step-label">Данные организации</span>
+                        </div>
+                        <div class="wizard-step" data-step="3">
+                            <span class="step-number">3</span>
+                            <span class="step-label">Временные ограничения</span>
+                        </div>
+                        <div class="wizard-step" data-step="4">
+                            <span class="step-number">4</span>
+                            <span class="step-label">Комментарии</span>
+                        </div>
+                    </div>
+
+                    <!-- Step 1 -->
+                    <div class="wizard-pane active" id="reqStep1">
+                        <h6 class="mb-3"><i class="bi bi-info-circle"></i> Общая информация</h6>
+                        <div class="mb-3">
+                            <i class="bi bi-key"></i>
+                            <label for="reqKey" class="form-label">Ключ лицензии <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="reqKey" name="KEY" required>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-building"></i>
+                            <label for="reqCompanyId" class="form-label">Компания <span class="text-danger">*</span></label>
+                            <select class="form-select" id="reqCompanyId" name="companyId" required>
+                                <option value="" disabled selected>Выберите компанию</option>
+                                <option th:each="company : ${companies}" th:value="${company.ID}"
+                                        th:data-name="${company.NAME}"
+                                        th:data-address="${company.ADDRESS}"
+                                        th:data-contact="${company.CONTACT}"
+                                        th:data-desc="${company.DESC}"
+                                        th:text="${company.NAME}"></option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-stickies"></i>
+                            <label for="reqLicensePlanId" class="form-label">Лицензионный план <span class="text-danger">*</span></label>
+                            <select class="form-select" id="reqLicensePlanId" name="licensePlanId" required>
+                                <option value="" disabled selected>Выберите план</option>
+                                <option th:each="plan : ${licensePlans}" th:value="${plan.ID}" th:text="${plan.NAME}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="wizard-pane" id="reqStep2">
+                        <h6 class="mb-3"><i class="bi bi-building"></i> Данные организации</h6>
+                        <div class="mb-3">
+                            <i class="bi bi-building"></i>
+                            <label for="reqOrgName" class="form-label">Наименование организации</label>
+                            <input type="text" class="form-control" id="reqOrgName" name="orgName" readonly placeholder="Автозаполнение из шага 1">
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-geo-alt"></i>
+                            <label for="reqOrgAddress" class="form-label">Адрес</label>
+                            <input type="text" class="form-control" id="reqOrgAddress" name="orgAddress" readonly placeholder="Автозаполнение из шага 1">
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-person-lines-fill"></i>
+                            <label for="reqOrgContact" class="form-label">Контакт</label>
+                            <input type="text" class="form-control" id="reqOrgContact" name="orgContact" readonly placeholder="Автозаполнение из шага 1">
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-card-text"></i>
+                            <label for="reqOrgDesc" class="form-label">Описание</label>
+                            <textarea class="form-control" id="reqOrgDesc" name="orgDesc" rows="3" readonly placeholder="Автозаполнение из шага 1"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="wizard-pane" id="reqStep3">
+                        <h6 class="mb-3"><i class="bi bi-calendar-range"></i> Временные ограничения</h6>
+                        <div class="mb-3">
+                            <i class="bi bi-calendar2-plus"></i>
+                            <label for="reqStartDate" class="form-label">Дата начала <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="reqStartDate" name="START_DATE" required>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-calendar2-minus"></i>
+                            <label for="reqEndDate" class="form-label">Дата окончания <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="reqEndDate" name="END_DATE" required>
+                        </div>
+                        <div class="mb-3">
+                            <i class="bi bi-bell"></i>
+                            <label for="reqNotificationPeriod" class="form-label">Период отправки уведомлений</label>
+                            <select class="form-select" id="reqNotificationPeriod" name="NOTIFICATION_PERIOD">
+                                <option value="Нет" selected>Нет</option>
+                                <option value="Да">Да</option>
+                                <option value="1 день">1 день</option>
+                                <option value="3 дня">3 дня</option>
+                                <option value="5 дней">5 дней</option>
+                                <option value="1 месяц">1 месяц</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="wizard-pane" id="reqStep4">
+                        <h6 class="mb-3"><i class="bi bi-chat-left-text"></i> Комментарии</h6>
+                        <div class="mb-3">
+                            <label for="reqComment" class="form-label">Комментарий</label>
+                            <textarea class="form-control" id="reqComment" name="COMMENT" rows="5" placeholder="Опишите причину заявки..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Отмена</button>
+                    <div>
+                        <button type="button" class="btn btn-outline-secondary" id="reqWizardPrev" style="display:none;">
+                            <i class="bi bi-arrow-left"></i> Назад
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" id="reqWizardNext">
+                            Далее <i class="bi bi-arrow-right"></i>
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="reqWizardSubmit" style="display:none;">
+                            <i class="bi bi-send"></i> Отправить заявку
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== Request Wizard Logic ==========
+    if (document.getElementById('RequestModal') && document.getElementById('reqWizardNext')) {
+    const REQ_TOTAL_STEPS = 4;
+    let reqCurrentStep = 1;
+
+    const reqWizardSteps = document.querySelectorAll('#requestWizardSteps .wizard-step');
+    const reqWizardPanes = [document.getElementById('reqStep1'), document.getElementById('reqStep2'),
+        document.getElementById('reqStep3'), document.getElementById('reqStep4')];
+    const reqPrevBtn = document.getElementById('reqWizardPrev');
+    const reqNextBtn = document.getElementById('reqWizardNext');
+    const reqSubmitBtn = document.getElementById('reqWizardSubmit');
+
+    function reqShowStep(step) {
+        reqWizardPanes.forEach(p => { if (p) p.classList.remove('active'); });
+        reqWizardSteps.forEach(s => s.classList.remove('active', 'completed'));
+
+        const pane = document.getElementById('reqStep' + step);
+        if (pane) pane.classList.add('active');
+
+        reqWizardSteps.forEach((s, i) => {
+            if (i + 1 < step) s.classList.add('completed');
+            if (i + 1 === step) s.classList.add('active');
+        });
+
+        reqPrevBtn.style.display = step > 1 ? '' : 'none';
+        reqNextBtn.style.display = step < REQ_TOTAL_STEPS ? '' : 'none';
+        reqSubmitBtn.style.display = step === REQ_TOTAL_STEPS ? '' : 'none';
+    }
+
+    function reqValidateStep(step) {
+        const pane = document.getElementById('reqStep' + step);
+        const requiredFields = pane.querySelectorAll('[required]');
+        let valid = true;
+        requiredFields.forEach(field => {
+            if (!field.value || field.value.trim() === '') {
+                field.classList.add('is-invalid');
+                valid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        return valid;
+    }
+
+    reqNextBtn.addEventListener('click', function () {
+        if (!reqValidateStep(reqCurrentStep)) return;
+        if (reqCurrentStep === 1) {
+            const companySelect = document.getElementById('reqCompanyId');
+            const selectedOption = companySelect.options[companySelect.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                document.getElementById('reqOrgName').value = selectedOption.getAttribute('data-name') || selectedOption.text;
+                document.getElementById('reqOrgAddress').value = selectedOption.getAttribute('data-address') || '';
+                document.getElementById('reqOrgContact').value = selectedOption.getAttribute('data-contact') || '';
+                document.getElementById('reqOrgDesc').value = selectedOption.getAttribute('data-desc') || '';
+            } else {
+                document.getElementById('reqOrgName').value = '';
+                document.getElementById('reqOrgAddress').value = '';
+                document.getElementById('reqOrgContact').value = '';
+                document.getElementById('reqOrgDesc').value = '';
+            }
+        }
+        if (reqCurrentStep < REQ_TOTAL_STEPS) {
+            reqCurrentStep++;
+            reqShowStep(reqCurrentStep);
+        }
+    });
+
+    reqPrevBtn.addEventListener('click', function () {
+        if (reqCurrentStep > 1) {
+            reqCurrentStep--;
+            reqShowStep(reqCurrentStep);
+        }
+    });
+
+    // Reset request wizard on modal open
+    document.getElementById('RequestModal').addEventListener('show.bs.modal', function () {
+        reqCurrentStep = 1;
+        reqShowStep(1);
+        document.getElementById('requestWizardForm').reset();
+        document.getElementById('reqOrgName').value = '';
+        document.getElementById('reqOrgAddress').value = '';
+        document.getElementById('reqOrgContact').value = '';
+        document.getElementById('reqOrgDesc').value = '';
+        document.querySelectorAll('#requestWizardForm .is-invalid').forEach(el => el.classList.remove('is-invalid'));
+    });
+    } // end of request wizard guard
 </script>
 
 </body>

@@ -7,34 +7,29 @@ import lombok.Setter;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity(name = "C01_COMPANY")
+@Entity(name = "P01_PERMISSION")
 @Getter
 @Setter
-public class Company {
+public class Permission {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "C01_ID")
+    @Column(name = "P01_ID")
     private Long ID;
 
-    @Column(name = "C01_NAME", columnDefinition = "TEXT")
+    @Column(name = "P01_NAME", columnDefinition = "TEXT", unique = true)
     private String NAME;
 
-    @Column(name = "C01_ADDRESS", columnDefinition = "TEXT")
-    private String ADDRESS;
+    @Column(name = "P01_DESCRIPTION", columnDefinition = "TEXT")
+    private String DESCRIPTION;
 
-    @Column(name = "C01_CONTACT",columnDefinition = "TEXT")
-    private String CONTACT;
-
-    @Column(name = "C01_DESC", columnDefinition = "TEXT")
-    private String DESC;
-
-    @OneToMany(mappedBy = "company")
-    private Set<License> licenses;
+    @ManyToMany(mappedBy = "permissions")
+    private Set<Role> roles;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Company other)) return false;
+        if (!(o instanceof Permission other)) return false;
         return ID != null && ID.equals(other.ID);
     }
 
@@ -45,6 +40,6 @@ public class Company {
 
     @Override
     public String toString() {
-        return "Company{ID=" + ID + ", NAME='" + NAME + "'}";
+        return "Permission{ID=" + ID + ", NAME='" + NAME + "'}";
     }
 }

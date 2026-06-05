@@ -30,6 +30,14 @@
                 </svg>
                 Лицензионные планы
             </a>
+            <a sec:authorize="hasRole('USER')" th:href="@{/requests}" class="nav-link">
+                <i class="bi bi-plus-circle"></i>
+                Мои заявки
+            </a>
+            <a sec:authorize="hasRole('LEAD')" th:href="@{/requests}" class="nav-link">
+                <i class="bi bi-clipboard-check"></i>
+                Заявки на согласование
+            </a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear"
                      viewBox="0 0 16 16">
@@ -44,9 +52,9 @@
                    placeholder="Поиск..."
                    aria-label="Search" th:value="${keyword}">
             <button class="btn btn-outline-success me-2" type="submit">Поиск</button>
-            <button class="btn btn-outline-danger" type="submit">
-                <a th:href="@{/login}" style="text-decoration: none; color: red">Выйти</a>
-            </button>
+        </form>
+        <form th:action="@{/logout}" method="post" class="d-inline">
+            <button class="btn btn-outline-danger" type="submit">Выйти</button>
         </form>
     </div>
 </nav>
@@ -64,7 +72,7 @@
             <span id="rowCounter" class="badge bg-secondary "></span>
         </div>
         <!-- Кнопка "Добавить" справа -->
-        <div sec:authorize="hasRole('ADMIN')" class="col-auto ms-auto">
+        <div sec:authorize="hasRole('LEAD')" class="col-auto ms-auto">
             <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#LicensePlanModal">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                      class="bi bi-clipboard-plus-fill" viewBox="0 0 16 16">
@@ -104,7 +112,7 @@
                         </svg>
                         Цена в тыс. рублях
                     </th>
-                    <th sec:authorize="hasRole('ADMIN')">
+                    <th sec:authorize="hasRole('LEAD')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                              class="bi bi-code-square" viewBox="0 0 16 16">
                             <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
@@ -119,7 +127,7 @@
                     <td class="name-cell text-start" th:text="${licensePlan.NAME}"></td>
                     <td class="max-users-cell" th:text="${licensePlan.MAX_USERS}"></td>
                     <td class="price-cell" th:text="${licensePlan.PRICE}"></td>
-                    <td sec:authorize="hasRole('ADMIN')">
+                    <td sec:authorize="hasRole('LEAD')">
                         <button
                                 type="button"
                                 class="btn btn-outline-primary"

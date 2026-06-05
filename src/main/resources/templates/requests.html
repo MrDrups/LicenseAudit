@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ru">
+<th:block th:replace="~{fragments/header :: commonHead}"></th:block>
+<body style="background-color: #dee2e6">
+
+<nav class="navbar navbar-light navbar-expand-lg shadow-lg rounded-bottom" style="background-color: #f8f9fa;">
+    <div class="container-fluid">
+        <div class="navbar-nav">
+            <a th:href="@{/}" class="nav-link">
+                <i class="bi bi-file-text"></i>
+                Лицензии
+            </a>
+            <a th:href="@{/companies}" class="nav-link">
+                <i class="bi bi-building"></i>
+                Компании
+            </a>
+            <a th:href="@{/license_plans}" class="nav-link">
+                <i class="bi bi-stickies"></i>
+                Лицензионные планы
+            </a>
+            <a sec:authorize="hasRole('USER')" th:href="@{/requests}" class="nav-link active" aria-current="page">
+                <i class="bi bi-plus-circle"></i>
+                Мои заявки
+            </a>
+            <a sec:authorize="hasRole('LEAD')" th:href="@{/requests}" class="nav-link active" aria-current="page">
+                <i class="bi bi-clipboard-check"></i>
+                Заявки на согласование
+            </a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link">
+                <i class="bi bi-gear"></i>
+                Администрирование
+            </a>
+        </div>
+        <form class="d-flex" th:action="@{/requests}">
+            <input class="form-control me-2" type="search" name="keyword" id="keyword"
+                   placeholder="Поиск..." aria-label="Search" th:value="${keyword}">
+            <button class="btn btn-outline-success me-2" type="submit">Поиск</button>
+        </form>
+        <form th:action="@{/logout}" method="post" class="d-inline">
+            <button class="btn btn-outline-danger" type="submit">Выйти</button>
+        </form>
+    </div>
+</nav>
+
+<!-- TABLE -->
+<div class="mt-5 shadow-lg p-3 rounded-3" style="background-color: #f8f9fa">
+    <div class="row mb-3">
+        <div class="col-12 d-flex align-items-center justify-content-between">
+            <h3 class="mt-3" style="color: black">
+                <span sec:authorize="hasRole('USER')">Мои заявки</span>
+                <span sec:authorize="hasRole('LEAD')">Заявки на согласование</span>
+                <span sec:authorize="hasRole('ADMIN')">Все заявки</span>
+            </h3>
+            <a sec:authorize="hasRole('USER')" class="btn btn-primary" th:href="@{/requests/create}">
+                <i class="bi bi-plus-circle"></i>
+                Создать заявку
+            </a>
+        </div>
+    </div>
+
+    <!-- Вкладки для LEAD: Ожидающие / Рассмотренные -->
+    <div sec:authorize="hasRole('LEAD')" class="mb-3">
+        <ul class="nav nav-tabs" id="leadTabs">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-pending">Ожидающие</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-reviewed">Рассмотренные</button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <!-- Для USER: единая таблица с действиями -->
+            <table sec:authorize="hasRole('USER')" class="table table-hover">
+                <thead>
+                <tr class="text-center">
+                    <th class="text-start"><i class="bi bi-key"></i> Ключ</th>
+                    <th class="text-start"><i class="bi bi-building"></i> Компания</th>
+                    <th class="text-start"><i class="bi bi-stickies"></i> План</th>
+                    <th><i class="bi bi-calendar2-plus"></i> Начало</th>
+                    <th><i class="bi bi-calendar2-minus"></i> Конец</th>
+                    <th><i class="bi bi-chat-text"></i> Комментарий</th>
+                    <th><i class="bi bi-flag"></i> Статус</th>
+                    <th><i class="bi bi-calendar3"></i> Дата создания</th>
+                    <th style="text-align: center;"><i class="bi bi-code-square"></i> Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="text-center align-middle" th:each="req : ${requests}"
+                    th:classappend="${req.status == 'PENDING'} ? 'table-secondary'">
+                    <td class="text-start" th:text="${req.KEY}"></td>
+                    <td class="text-start">
+                        <span th:if="${req.company != null}" th:text="${req.company.NAME}"></span>
+                        <span th:if="${req.company == null}"><i class="bi bi-dash"></i></span>
+                    </td>
+                    <td class="text-start">
+                        <span th:if="${req.licensePlan != null}" th:text="${req.licensePlan.NAME}"></span>
+                        <span th:if="${req.licensePlan == null}"><i class="bi bi-dash"></i></span>
+                    </td>
+                    <td><samp class="text-secondary" th:text="${req.START_DATE}"></samp></td>
+                    <td><samp class="text-secondary" th:text="${req.END_DATE}"></samp></td>
+                    <td th:text="${req.COMMENT}"></td>
+                    <td>
+                        <span class="badge bg-warning text-dark" th:if="${req.status == 'PENDING'}">Ожидает</span>
+                        <span class="badge bg-success" th:if="${req.status == 'APPROVED'}">Одобрена</span>
+                        <span class="badge bg-danger" th:if="${req.status == 'REJECTED'}">Отклонена</span>
+                        <span class="badge bg-secondary text-decoration-line-through" th:if="${req.status == 'CANCELLED'}">Отменена</span>
+                    </td>
+                    <td><samp class="text-secondary" th:text="${#dates.format(req.createdAt, 'dd.MM.yyyy HH:mm')}"></samp></td>
+                    <td style="text-align: center;">
+                        <a th:if="${req.status == 'PENDING'}" class="btn btn-outline-primary btn-sm"
+                           th:href="@{/requests/edit/{id}(id=${req.ID})}" title="Редактировать">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <form th:if="${req.status == 'PENDING'}" th:action="@{/requests/cancel/{id}(id=${req.ID})}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm" title="Отменить"
+                                    onclick="return confirm('Отменить заявку?')">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </form>
+                        <span th:if="${req.status != 'PENDING'}" class="text-muted">—</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- Для LEAD: табы Ожидающие / Рассмотренные -->
+            <div sec:authorize="hasRole('LEAD')" class="tab-content" id="leadTabContent">
+                <div class="tab-pane fade show active" id="tab-pending">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr class="text-center">
+                            <th class="text-start"><i class="bi bi-key"></i> Ключ</th>
+                            <th class="text-start"><i class="bi bi-building"></i> Компания</th>
+                            <th class="text-start"><i class="bi bi-stickies"></i> План</th>
+                            <th><i class="bi bi-calendar2-plus"></i> Начало</th>
+                            <th><i class="bi bi-calendar2-minus"></i> Конец</th>
+                            <th><i class="bi bi-chat-text"></i> Комментарий</th>
+                            <th><i class="bi bi-person"></i> Автор</th>
+                            <th><i class="bi bi-flag"></i> Статус</th>
+                            <th><i class="bi bi-calendar3"></i> Дата создания</th>
+                            <th style="text-align: center;"><i class="bi bi-code-square"></i> Действия</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="text-center align-middle table-secondary"
+                            th:each="req : ${requests}" th:if="${req.status == 'PENDING'}">
+                            <td class="text-start" th:text="${req.KEY}"></td>
+                            <td class="text-start">
+                                <span th:if="${req.company != null}" th:text="${req.company.NAME}"></span>
+                                <span th:if="${req.company == null}"><i class="bi bi-dash"></i></span>
+                            </td>
+                            <td class="text-start">
+                                <span th:if="${req.licensePlan != null}" th:text="${req.licensePlan.NAME}"></span>
+                                <span th:if="${req.licensePlan == null}"><i class="bi bi-dash"></i></span>
+                            </td>
+                            <td><samp class="text-secondary" th:text="${req.START_DATE}"></samp></td>
+                            <td><samp class="text-secondary" th:text="${req.END_DATE}"></samp></td>
+                            <td th:text="${req.COMMENT}"></td>
+                            <td th:text="${req.author != null ? req.author.NAME : '-'}"></td>
+                            <td>
+                                <span class="badge bg-warning text-dark">Ожидает</span>
+                            </td>
+                            <td><samp class="text-secondary" th:text="${#dates.format(req.createdAt, 'dd.MM.yyyy HH:mm')}"></samp></td>
+                            <td style="text-align: center;">
+                                <a class="btn btn-outline-primary btn-sm"
+                                   th:href="@{/requests/edit/{id}(id=${req.ID})}" title="Редактировать">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <form th:action="@{/requests/approve/{id}(id=${req.ID})}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-success btn-sm" title="Одобрить">
+                                        <i class="bi bi-check-lg"></i>
+                                    </button>
+                                </form>
+                                <form th:action="@{/requests/reject/{id}(id=${req.ID})}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Отклонить">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="tab-reviewed">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr class="text-center">
+                            <th class="text-start"><i class="bi bi-key"></i> Ключ</th>
+                            <th class="text-start"><i class="bi bi-building"></i> Компания</th>
+                            <th class="text-start"><i class="bi bi-stickies"></i> План</th>
+                            <th><i class="bi bi-calendar2-plus"></i> Начало</th>
+                            <th><i class="bi bi-calendar2-minus"></i> Конец</th>
+                            <th><i class="bi bi-chat-text"></i> Комментарий</th>
+                            <th><i class="bi bi-person"></i> Автор</th>
+                            <th><i class="bi bi-flag"></i> Статус</th>
+                            <th><i class="bi bi-calendar3"></i> Дата создания</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="text-center align-middle" th:each="req : ${requests}"
+                            th:if="${req.status != 'PENDING'}"
+                            th:classappend="${req.status == 'APPROVED'} ? 'table-success' : (${req.status == 'REJECTED'} ? 'table-danger' : 'table-secondary')">
+                            <td class="text-start" th:text="${req.KEY}"></td>
+                            <td class="text-start">
+                                <span th:if="${req.company != null}" th:text="${req.company.NAME}"></span>
+                                <span th:if="${req.company == null}"><i class="bi bi-dash"></i></span>
+                            </td>
+                            <td class="text-start">
+                                <span th:if="${req.licensePlan != null}" th:text="${req.licensePlan.NAME}"></span>
+                                <span th:if="${req.licensePlan == null}"><i class="bi bi-dash"></i></span>
+                            </td>
+                            <td><samp class="text-secondary" th:text="${req.START_DATE}"></samp></td>
+                            <td><samp class="text-secondary" th:text="${req.END_DATE}"></samp></td>
+                            <td th:text="${req.COMMENT}"></td>
+                            <td th:text="${req.author != null ? req.author.NAME : '-'}"></td>
+                            <td>
+                                <span class="badge bg-success" th:if="${req.status == 'APPROVED'}">Одобрена</span>
+                                <span class="badge bg-danger" th:if="${req.status == 'REJECTED'}">Отклонена</span>
+                                <span class="badge bg-secondary text-decoration-line-through" th:if="${req.status == 'CANCELLED'}">Отменена</span>
+                            </td>
+                            <td><samp class="text-secondary" th:text="${#dates.format(req.createdAt, 'dd.MM.yyyy HH:mm')}"></samp></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Для ADMIN: единая таблица без действий -->
+            <table sec:authorize="hasRole('ADMIN')" class="table table-hover">
+                <thead>
+                <tr class="text-center">
+                    <th class="text-start"><i class="bi bi-key"></i> Ключ</th>
+                    <th class="text-start"><i class="bi bi-building"></i> Компания</th>
+                    <th class="text-start"><i class="bi bi-stickies"></i> План</th>
+                    <th><i class="bi bi-calendar2-plus"></i> Начало</th>
+                    <th><i class="bi bi-calendar2-minus"></i> Конец</th>
+                    <th><i class="bi bi-chat-text"></i> Комментарий</th>
+                    <th><i class="bi bi-person"></i> Автор</th>
+                    <th><i class="bi bi-flag"></i> Статус</th>
+                    <th><i class="bi bi-calendar3"></i> Дата создания</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="text-center align-middle" th:each="req : ${requests}"
+                    th:classappend="${req.status == 'PENDING'} ? 'table-secondary' : (${req.status == 'APPROVED'} ? 'table-success' : (${req.status == 'REJECTED'} ? 'table-danger' : ''))">
+                    <td class="text-start" th:text="${req.KEY}"></td>
+                    <td class="text-start">
+                        <span th:if="${req.company != null}" th:text="${req.company.NAME}"></span>
+                        <span th:if="${req.company == null}"><i class="bi bi-dash"></i></span>
+                    </td>
+                    <td class="text-start">
+                        <span th:if="${req.licensePlan != null}" th:text="${req.licensePlan.NAME}"></span>
+                        <span th:if="${req.licensePlan == null}"><i class="bi bi-dash"></i></span>
+                    </td>
+                    <td><samp class="text-secondary" th:text="${req.START_DATE}"></samp></td>
+                    <td><samp class="text-secondary" th:text="${req.END_DATE}"></samp></td>
+                    <td th:text="${req.COMMENT}"></td>
+                    <td th:text="${req.author != null ? req.author.NAME : '-'}"></td>
+                    <td>
+                        <span class="badge bg-warning text-dark" th:if="${req.status == 'PENDING'}">Ожидает</span>
+                        <span class="badge bg-success" th:if="${req.status == 'APPROVED'}">Одобрена</span>
+                        <span class="badge bg-danger" th:if="${req.status == 'REJECTED'}">Отклонена</span>
+                        <span class="badge bg-secondary text-decoration-line-through" th:if="${req.status == 'CANCELLED'}">Отменена</span>
+                    </td>
+                    <td><samp class="text-secondary" th:text="${#dates.format(req.createdAt, 'dd.MM.yyyy HH:mm')}"></samp></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

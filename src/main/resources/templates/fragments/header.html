@@ -1,19 +1,90 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ru">
 <head th:fragment="commonHead">
   <meta charset="UTF-8">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/scripts.js" defer></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лицензии</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<!-- commonHead для страниц, которым нужен Chart.js (admin) -->
+<head th:fragment="commonHeadWithCharts">
+  <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="/js/scripts.js" defer></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Лицензии</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
+<!-- Единый navbar для всех страниц -->
+<!-- Параметры: activePage — текущая страница ('licenses','companies','plans','requests','admin') -->
+<!--            searchAction — URL для формы поиска (если пусто — поиск не отображается) -->
+<nav th:fragment="navbar(activePage, searchAction)"
+     class="navbar navbar-light navbar-expand-lg shadow-lg rounded-bottom"
+     style="background-color: #f8f9fa;">
+    <div class="container-fluid">
+        <div class="navbar-nav">
+            <a th:href="@{/}" class="nav-link"
+               th:classappend="${activePage == 'licenses'} ? 'active'"
+               th:attr="aria-current=${activePage == 'licenses'} ? 'page' : null">
+                <i class="bi bi-file-text"></i>
+                Лицензии
+            </a>
+            <a th:href="@{/companies}" class="nav-link"
+               th:classappend="${activePage == 'companies'} ? 'active'"
+               th:attr="aria-current=${activePage == 'companies'} ? 'page' : null">
+                <i class="bi bi-building"></i>
+                Компании
+            </a>
+            <a th:href="@{/license_plans}" class="nav-link"
+               th:classappend="${activePage == 'plans'} ? 'active'"
+               th:attr="aria-current=${activePage == 'plans'} ? 'page' : null">
+                <i class="bi bi-stickies"></i>
+                Лицензионные планы
+            </a>
+            <a sec:authorize="hasRole('USER')" th:href="@{/requests}" class="nav-link"
+               th:classappend="${activePage == 'requests'} ? 'active'"
+               th:attr="aria-current=${activePage == 'requests'} ? 'page' : null">
+                <i class="bi bi-plus-circle"></i>
+                Мои заявки
+            </a>
+            <a sec:authorize="hasRole('LEAD')" th:href="@{/requests}" class="nav-link"
+               th:classappend="${activePage == 'requests'} ? 'active'"
+               th:attr="aria-current=${activePage == 'requests'} ? 'page' : null">
+                <i class="bi bi-clipboard-check"></i>
+                Заявки на согласование
+            </a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link"
+               th:classappend="${activePage == 'admin'} ? 'active'"
+               th:attr="aria-current=${activePage == 'admin'} ? 'page' : null">
+                <i class="bi bi-gear"></i>
+                Администрирование
+            </a>
+        </div>
+        <div class="d-flex align-items-center">
+            <form th:if="${searchAction != null and searchAction != ''}"
+                  th:action="${searchAction}" class="d-flex me-2">
+                <input class="form-control me-2" type="search" name="keyword" id="keyword"
+                       placeholder="Поиск..."
+                       aria-label="Search" th:value="${keyword}">
+                <button class="btn btn-outline-success me-2" type="submit">Поиск</button>
+            </form>
+            <form th:action="@{/logout}" method="post">
+                <button class="btn btn-outline-danger" type="submit">Выйти</button>
+            </form>
+        </div>
+    </div>
+</nav>
+</html>

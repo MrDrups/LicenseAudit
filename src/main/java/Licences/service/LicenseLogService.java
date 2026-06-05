@@ -17,15 +17,23 @@ public class LicenseLogService {
     private final CurrentUserProvider currentUserProvider;
 
     public void createLog(String changeType, License oldLicense, License newLicense) {
+        createLog(changeType,
+                oldLicense != null ? oldLicense.toString() : null,
+                newLicense);
+    }
+
+    /**
+     * Перегрузка для случаев, когда старое значение сохранено ДО мутации объекта.
+     * Используется в revokeLicense/extendLicense, где JPA-сущность мутируется in-place.
+     */
+    public void createLog(String changeType, String oldValue, License newLicense) {
         User currentUser = currentUserProvider.getCurrentUser();
         LicenseLog log = new LicenseLog();
         log.setCHANGE_TYPE(changeType);
         log.setCHANGE_DATE(new Timestamp(System.currentTimeMillis()));
         log.setUser(currentUser);
-        log.setLicense(newLicense != null ? newLicense : oldLicense);
-        if (oldLicense != null) {
-            log.setOLD_VALUE(oldLicense.toString());
-        }
+        log.setLicense(newLicense);
+        log.setOLD_VALUE(oldValue);
         if (newLicense != null) {
             log.setNEW_VALUE(newLicense.toString());
         }

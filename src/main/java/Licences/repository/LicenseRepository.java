@@ -26,4 +26,13 @@ public interface LicenseRepository extends JpaRepository<License, Long> {
 
     @Query("SELECT lp.NAME, COUNT(l) FROM L01_LICENSE l JOIN l.licensePlan lp GROUP BY lp.NAME")
     List<Object[]> countLicensesByLicensePlan();
+
+    @Query("SELECT COUNT(l) FROM L01_LICENSE l WHERE l.REVOKED = true")
+    long countRevoked();
+
+    @Query("SELECT COUNT(l) FROM L01_LICENSE l WHERE l.REVOKED = false AND l.END_DATE < CURRENT_DATE")
+    long countExpired();
+
+    @Query("SELECT COUNT(l) FROM L01_LICENSE l WHERE l.REVOKED = false AND l.END_DATE >= CURRENT_DATE")
+    long countActive();
 }

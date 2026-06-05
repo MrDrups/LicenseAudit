@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,13 @@ public class LicenseController {
     }
 
     @PostMapping("/save")
-    public String saveLicense(@ModelAttribute License license, @RequestParam Long companyId, @RequestParam Long licensePlanId) {
+    public String saveLicense(@ModelAttribute License license,
+                              @RequestParam Long companyId,
+                              @RequestParam Long licensePlanId) {
+        Company company = companyService.getCompanyById(companyId)
+                .orElseThrow(() -> new IllegalArgumentException("Компания с ID " + companyId + " не найдена"));
+        license.setCompany(company);
+
         licenseService.saveLicense(license, companyId, licensePlanId);
         return "redirect:/";
     }
@@ -49,6 +56,18 @@ public class LicenseController {
     @GetMapping("/delete/{id}")
     public String deleteLicense(@PathVariable Long id) {
         licenseService.deleteLicense(id);
+        return "redirect:/";
+    }
+
+    @PostMapping("/licenses/revoke/{id}")
+    public String revokeLicense(@PathVariable Long id) {
+        licenseService.revokeLicense(id);
+        return "redirect:/";
+    }
+
+    @PostMapping("/licenses/extend/{id}")
+    public String extendLicense(@PathVariable Long id, @RequestParam LocalDate newEndDate) {
+        licenseService.extendLicense(id, newEndDate);
         return "redirect:/";
     }
 }

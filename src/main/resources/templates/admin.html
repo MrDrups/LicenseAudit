@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="ru">
-<th:block th:replace="~{fragments/header :: commonHead}"></th:block>
+<th:block th:replace="~{fragments/header :: commonHeadWithCharts}"></th:block>
 <body style="background-color: #dee2e6">
 <nav class="navbar navbar-light navbar-expand-lg shadow-lg rounded-bottom" style="background-color: #f8f9fa;">
     <div class="container-fluid">
@@ -18,6 +18,14 @@
                 <i class="bi bi-stickies"></i>
                 Лицензионные планы
             </a>
+            <a sec:authorize="hasRole('USER')" th:href="@{/requests}" class="nav-link">
+                <i class="bi bi-plus-circle"></i>
+                Мои заявки
+            </a>
+            <a sec:authorize="hasRole('LEAD')" th:href="@{/requests}" class="nav-link">
+                <i class="bi bi-clipboard-check"></i>
+                Заявки на согласование
+            </a>
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin}" class="nav-link active" aria-current="page">
                 <i class="bi bi-gear"></i>
                 Администрирование
@@ -28,9 +36,9 @@
                    placeholder="Поиск..."
                    aria-label="Search" th:value="${keyword}">
             <button class="btn btn-outline-success me-2" type="submit">Поиск</button>
-            <button class="btn btn-outline-danger" type="submit">
-                <a th:href="@{/login}" style="text-decoration: none; color: red">Выйти</a>
-            </button>
+        </form>
+        <form th:action="@{/logout}" method="post" class="d-inline">
+            <button class="btn btn-outline-danger" type="submit">Выйти</button>
         </form>
     </div>
 </nav>
@@ -72,6 +80,14 @@
                     aria-controls="export" aria-selected="false">
                 <i class="bi bi-database-down"></i>
                 Выгрузка данных
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" style="color: #333333" id="roles-tab" data-bs-toggle="tab"
+                    data-bs-target="#roles" role="tab"
+                    aria-controls="roles" aria-selected="false">
+                <i class="bi bi-shield-lock"></i>
+                Роли
             </button>
         </li>
     </ul>
@@ -203,26 +219,68 @@
         <!-- Статистика -->
         <div class="tab-pane fade" id="statistics" role="tabpanel" aria-labelledby="statistics-tab">
             <div class="col-12">
-                <p><i class="bi bi-file-text me-2"></i><strong>Общее количество лицензий:</strong> <span
-                        th:text="${totalLicenses}"
-                        class="stat-value"></span>
-                </p>
-                <p><i class="bi bi-building me-2"></i><strong>Кол-во компаний:</strong> <span
-                        th:text="${totalCompanies}"
-                        class="stat-value"></span>
-                </p>
-                <p><i class="bi bi-stickies me-2"></i><strong>Кол-во лиц.планов:</strong> <span
-                        th:text="${totalLicensePlans}"
-                        class="stat-value"></span></p>
+                <!-- Счётчики ключевых показателей -->
+                <div class="row mb-4">
+                    <div class="col-md-2">
+                        <div class="card text-center p-3 shadow-sm">
+                            <i class="bi bi-file-text fs-3 text-primary"></i>
+                            <h6 class="mt-2 mb-0" th:text="${totalLicenses}"></h6>
+                            <small class="text-muted">Всего лицензий</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card text-center p-3 shadow-sm">
+                            <i class="bi bi-check-circle fs-3 text-success"></i>
+                            <h6 class="mt-2 mb-0" th:text="${activeLicenses}"></h6>
+                            <small class="text-muted">Активных</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card text-center p-3 shadow-sm">
+                            <i class="bi bi-clock-history fs-3 text-warning"></i>
+                            <h6 class="mt-2 mb-0" th:text="${expiredLicenses}"></h6>
+                            <small class="text-muted">Истёкших</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card text-center p-3 shadow-sm">
+                            <i class="bi bi-slash-circle fs-3 text-danger"></i>
+                            <h6 class="mt-2 mb-0" th:text="${revokedLicenses}"></h6>
+                            <small class="text-muted">Отозванных</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card text-center p-3 shadow-sm">
+                            <i class="bi bi-building fs-3 text-info"></i>
+                            <h6 class="mt-2 mb-0" th:text="${totalCompanies}"></h6>
+                            <small class="text-muted">Компаний</small>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="card text-center p-3 shadow-sm">
+                            <i class="bi bi-people fs-3 text-secondary"></i>
+                            <h6 class="mt-2 mb-0" th:text="${totalUsers}"></h6>
+                            <small class="text-muted">Пользователей</small>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Навигационная панель -->
                 <ul class="nav nav-tabs mb-3" id="statisticsTabs" role="tablist">
                     <li class="nav-item">
+                        <button class="nav-link" style="color: #333333" id="status-tab" data-bs-toggle="tab"
+                                data-bs-target="#status-chart" type="button" role="tab"
+                                aria-controls="status-chart" aria-selected="true">
+                            <i class="bi bi-pie-chart"></i>
+                            По статусам
+                        </button>
+                    </li>
+                    <li class="nav-item">
                         <button class="nav-link" style="color: #333333" id="companies-tab" data-bs-toggle="tab"
                                 data-bs-target="#companies" type="button" role="tab"
-                                aria-controls="companies" aria-selected="true">
+                                aria-controls="companies" aria-selected="false">
                             <i class="bi bi-building"></i>
-                            Лицензии по компаниям
+                            По компаниям
                         </button>
                     </li>
                     <li class="nav-item">
@@ -230,18 +288,25 @@
                                 data-bs-target="#plans" type="button" role="tab"
                                 aria-controls="plans" aria-selected="false">
                             <i class="bi bi-stickies"></i>
-                            Лицензии по планам
+                            По планам
                         </button>
                     </li>
                 </ul>
 
                 <!-- Содержимое вкладок -->
                 <div class="tab-content">
-                    <!-- Лицензии по компаниям -->
+                    <!-- Круговая диаграмма по статусам -->
+                    <div class="tab-pane fade" id="status-chart" role="tabpanel" aria-labelledby="status-tab">
+                        <div class="d-flex justify-content-center">
+                            <canvas id="statusChart" style="max-width: 400px; max-height: 300px"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Столбчатая диаграмма по компаниям -->
                     <div class="tab-pane fade" id="companies" role="tabpanel" aria-labelledby="companies-tab">
                         <div class="table-container"
-                             style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <div style="flex: 0.5; margin-right: 10px;">
+                             style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                            <div style="flex: 0.4; margin-right: 10px;">
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
@@ -263,17 +328,17 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- Диаграмма -->
-                            <div class="statistics-container" style="flex: 0.5; margin-right: 10px;">
-                                <canvas id="licenseChart" style="max-width: 300px; max-height: 150px"></canvas>
+                            <div class="statistics-container" style="flex: 0.6; margin-right: 10px;">
+                                <canvas id="licenseChart"></canvas>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Столбчатая диаграмма по планам -->
                     <div class="tab-pane fade" id="plans" role="tabpanel" aria-labelledby="plans-tab">
                         <div class="table-container"
-                             style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
-                            <div style="flex: 0.5; margin-right: 10px;">
+                             style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
+                            <div style="flex: 0.4; margin-right: 10px;">
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
@@ -295,8 +360,8 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="statistics-container" style="flex: 0.5; margin-right: 10px;">
-                                <canvas id="plansChart" style="max-width: 300px; max-height: 150px"></canvas>
+                            <div class="statistics-container" style="flex: 0.6; margin-right: 10px;">
+                                <canvas id="plansChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -308,18 +373,71 @@
         <!-- Выгрузка данных -->
         <div class="tab-pane fade" id="export" role="tabpanel" aria-labelledby="export-tab">
             <h3>Выгрузка данных</h3>
-            <div class="list-group" style="width: 400px; height: 400px; margin-right: 10px; border-radius: 24px">
-                <a th:href="@{/export/licenses}" class="list-group-item list-group-item-action"><i
-                        class="bi bi-file-text me-2"></i>Выгрузка лицензий</a>
-                <a th:href="@{/export/companies}" class="list-group-item list-group-item-action"><i
-                        class="bi bi-building me-2"></i>Выгрузка компаний</a>
-                <a th:href="@{/export/plans}" class="list-group-item list-group-item-action"><i
-                        class="bi bi-stickies me-2"></i>Выгрузка лицензионных
-                    планов</a>
-                <a th:href="@{/export/logs}" class="list-group-item list-group-item-action"><i
-                        class="bi bi-braces-asterisk me-2"></i>Выгрузка логов</a>
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="mb-3"><i class="bi bi-file-earmark-excel"></i> Excel</h5>
+                    <div class="list-group mb-4" style="border-radius: 12px">
+                        <a th:href="@{/export/licenses}" class="list-group-item list-group-item-action"><i
+                                class="bi bi-file-text me-2"></i>Лицензии</a>
+                        <a th:href="@{/export/companies}" class="list-group-item list-group-item-action"><i
+                                class="bi bi-building me-2"></i>Компании</a>
+                        <a th:href="@{/export/plans}" class="list-group-item list-group-item-action"><i
+                                class="bi bi-stickies me-2"></i>Лицензионные планы</a>
+                        <a th:href="@{/export/logs}" class="list-group-item list-group-item-action"><i
+                                class="bi bi-braces-asterisk me-2"></i>Логи</a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="mb-3"><i class="bi bi-filetype-csv"></i> CSV</h5>
+                    <div class="list-group mb-4" style="border-radius: 12px">
+                        <a th:href="@{/export/licenses/csv}" class="list-group-item list-group-item-action"><i
+                                class="bi bi-file-text me-2"></i>Лицензии</a>
+                        <a th:href="@{/export/companies/csv}" class="list-group-item list-group-item-action"><i
+                                class="bi bi-building me-2"></i>Компании</a>
+                        <a th:href="@{/export/license-plans/csv}" class="list-group-item list-group-item-action"><i
+                                class="bi bi-stickies me-2"></i>Лицензионные планы</a>
+                        <a th:href="@{/export/license-logs/csv}" class="list-group-item list-group-item-action"><i
+                                class="bi bi-braces-asterisk me-2"></i>Логи</a>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- Вкладка «Роли и разрешения» -->
+        <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="roles-tab">
+            <div class="col-12">
+                <div th:each="role : ${roles}" class="card mb-3 shadow-sm">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="bi bi-shield-lock me-2"></i>
+                        <strong th:text="${role.NAME}"></strong>
+                        <span class="badge bg-secondary ms-2" th:text="${#sets.size(role.permissions)} + ' разреш.'"></span>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/roles/permissions}" method="post">
+                            <input type="hidden" name="roleId" th:value="${role.ID}">
+                            <div class="row">
+                                <div class="col-md-4" th:each="perm : ${allPermissions}">
+                                    <div class="form-check mb-2">
+                                        <input type="checkbox" class="form-check-input"
+                                               name="permissionIds"
+                                               th:value="${perm.ID}"
+                                               th:id="'perm-' + ${role.ID} + '-' + ${perm.ID}"
+                                               th:checked="${role.permissions != null && role.permissions.contains(perm)}">
+                                        <label class="form-check-label"
+                                               th:for="'perm-' + ${role.ID} + '-' + ${perm.ID}"
+                                               th:text="${perm.DESCRIPTION != null ? perm.DESCRIPTION : perm.NAME}"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-outline-primary mt-2">
+                                <i class="bi bi-check-lg"></i> Сохранить
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 <div class="container mt-3">
@@ -485,24 +603,29 @@
 
 
     document.addEventListener('DOMContentLoaded', function () {
-        function createDoughnutChart(canvasId, labels, data) {
+        const activeLicenses = /*[[${activeLicenses}]]*/ 0;
+        const expiredLicenses = /*[[${expiredLicenses}]]*/ 0;
+        const revokedLicenses = /*[[${revokedLicenses}]]*/ 0;
+
+        function createBarChart(canvasId, labels, data, label) {
             new Chart(document.getElementById(canvasId), {
-                type: 'doughnut',
+                type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
+                        label: label,
                         data: data,
                         backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)'
                         ],
                         borderColor: [
-                            'rgba(255, 99, 132, 1)',
                             'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
                             'rgba(255, 206, 86, 1)',
                             'rgba(75, 192, 192, 1)',
                             'rgba(153, 102, 255, 1)',
@@ -514,9 +637,39 @@
                 options: {
                     responsive: true,
                     plugins: {
-                        legend: {
-                            position: 'right',
-                        }
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+        }
+
+        function createStatusDoughnutChart() {
+            new Chart(document.getElementById('statusChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Активные', 'Истёкшие', 'Отозванные'],
+                    datasets: [{
+                        data: [activeLicenses, expiredLicenses, revokedLicenses],
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.7)',
+                            'rgba(255, 193, 7, 0.7)',
+                            'rgba(220, 53, 69, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(220, 53, 69, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'right' }
                     }
                 }
             });
@@ -524,13 +677,16 @@
 
         function getTableData(tableSelector) {
             const table = document.querySelector(tableSelector);
+            if (!table) return {labels: [], data: []};
             const labels = [];
             const data = [];
 
             table.querySelectorAll('tbody tr').forEach(row => {
                 const cells = row.querySelectorAll('td');
-                labels.push(cells[0].innerText.trim());
-                data.push(parseInt(cells[1].innerText.trim(), 10));
+                if (cells.length >= 2) {
+                    labels.push(cells[0].innerText.trim());
+                    data.push(parseInt(cells[1].innerText.trim(), 10));
+                }
             });
 
             return {labels, data};
@@ -538,11 +694,12 @@
 
         let companiesChartRendered = false;
         let plansChartRendered = false;
+        let statusChartRendered = false;
 
         function renderCompaniesChart() {
             if (!companiesChartRendered) {
                 const companiesData = getTableData('#companies table');
-                createDoughnutChart('licenseChart', companiesData.labels, companiesData.data);
+                createBarChart('licenseChart', companiesData.labels, companiesData.data, 'Лицензии');
                 companiesChartRendered = true;
             }
         }
@@ -550,8 +707,15 @@
         function renderPlansChart() {
             if (!plansChartRendered) {
                 const plansData = getTableData('#plans table');
-                createDoughnutChart('plansChart', plansData.labels, plansData.data);
+                createBarChart('plansChart', plansData.labels, plansData.data, 'Лицензии');
                 plansChartRendered = true;
+            }
+        }
+
+        function renderStatusChart() {
+            if (!statusChartRendered) {
+                createStatusDoughnutChart();
+                statusChartRendered = true;
             }
         }
 
@@ -565,6 +729,10 @@
 
                 if (targetId === '#plans') {
                     renderPlansChart();
+                }
+
+                if (targetId === '#status-chart') {
+                    renderStatusChart();
                 }
             });
         });
